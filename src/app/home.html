@@ -1,0 +1,6085 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Security Validation Platform | EVADA</title>
+  <meta
+    content="Manage verified assets, run Web and TLS assessments, triage normalized findings, and issue immutable VAPT reports in one tenant-isolated platform."
+    name="description" />
+  <meta content="Security Validation Platform | EVADA" property="og:title" />
+  <meta
+    content="Manage verified assets, run Web and TLS assessments, triage normalized findings, and issue immutable VAPT reports in one tenant-isolated platform."
+    property="og:description" />
+  <meta content="" property="og:image" />
+  <meta content="Security Validation Platform | EVADA" property="twitter:title" />
+  <meta
+    content="Manage verified assets, run Web and TLS assessments, triage normalized findings, and issue immutable VAPT reports in one tenant-isolated platform."
+    property="twitter:description" />
+  <meta content="" property="twitter:image" />
+  <meta property="og:type" content="website" />
+  <meta content="summary_large_image" name="twitter:card" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/vendor/assets/Roobert-Regular.woff2" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="/vendor/assets/AeonikMono-Regular.woff2" />
+  <link href="/vendor/site.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript">
+    !(function (o, c) {
+      var n = c.documentElement,
+        t = " w-mod-";
+      ((n.className += t + "js"),
+        ("ontouchstart" in o ||
+          (o.DocumentTouch && c instanceof DocumentTouch)) &&
+        (n.className += t + "touch"));
+    })(window, document);
+  </script>
+  <meta name="theme-color" content="#071018" />
+  <style>
+    body {
+      -moz-font-smoothing: antialiased;
+      -o-font-smoothing: antialiased;
+      -webkit-font-smoothing: antialiased;
+      font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      overscroll-behavior-y: none;
+    }
+
+    html.lenis,
+    html.lenis body {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+      overflow: clip;
+    }
+
+    .lenis.lenis-smooth iframe {
+      pointer-events: none;
+    }
+
+    /*Text Selection Color*/
+    ::selection {
+      background: var(--colors-all--primary);
+      color: var(--colors-all--black);
+      text-shadow: none;
+    }
+
+    ::-moz-selection {
+      background: var(--colors-all--primary);
+      color: var(--colors-all--black);
+      text-shadow: none;
+    }
+
+    /*Reset apple form styles*/
+    input,
+    textarea,
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      border-radius: 0;
+      background-image: none;
+      caret-color: var(--colors-all--primary);
+    }
+  </style>
+  <script defer src="/vendor/gsap.min.js"></script>
+  <script defer src="/vendor/ScrollTrigger.min.js"></script>
+  <script defer src="/vendor/CustomEase.min.js"></script>
+  <script defer src="/vendor/lenis.min.js"></script>
+  <script defer src="/vendor/SplitText.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", (event) => {
+      gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
+
+      const lenis = new Lenis();
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      CustomEase.create("main", "0.65, 0.01, 0.05, 0.99");
+
+      // Select key elements
+      let navWrap = document.querySelector(".nav_middle");
+      let state = navWrap.getAttribute("data-nav");
+      let overlay = document.querySelector(".scrim");
+      let menuToggles = document.querySelectorAll("[data-menu-toggle]");
+      let menuLinks = navWrap.querySelectorAll(".nav_link");
+      let fadeTargets = navWrap.querySelectorAll("[data-menu-fade]");
+      let topLine = document.querySelector(".nav_menu-line.cc-top");
+      let bottomLine = document.querySelector(".nav_menu-line.cc-bottom");
+
+      let tl = gsap.timeline({
+        defaults: {
+          ease: "main",
+          duration: 0.8,
+        },
+      });
+
+      // Opens the navigation
+      const openNav = () => {
+        navWrap.setAttribute("data-nav", "open");
+
+        // Create animation timeline
+        tl.clear()
+          // Set nav to be invisible and clipped
+          .set(navWrap, { display: "none", "--menu-clip": "100%" })
+          .set(topLine, { y: "-0.125rem", rotation: 0 })
+          .set(bottomLine, { y: "0.125rem", rotation: 0 })
+          // Make nav visible
+          .to(navWrap, {
+            display: "flex",
+            "--menu-clip": "0%",
+          })
+          .to(topLine, { y: "0rem" }, "<")
+          .to(bottomLine, { y: "0rem" }, "<")
+          .to(topLine, { rotation: 45 }, "<+=0.3")
+          .to(bottomLine, { rotation: -45 }, "<")
+          // Fade in overlay
+          .fromTo(
+            overlay,
+            { display: "block", autoAlpha: 0 },
+            { autoAlpha: 1 },
+            "<",
+          )
+          // Animate in menu links
+          .fromTo(
+            menuLinks,
+            { yPercent: 140 },
+            { yPercent: 0, stagger: 0.05 },
+            "<+=0.1", // Start 0.35s after previous
+          )
+          // Fade in additional elements
+          .fromTo(
+            fadeTargets,
+            { autoAlpha: 0, yPercent: 100 },
+            { autoAlpha: 1, yPercent: 0, stagger: 0.05 },
+            "<+=0.15",
+          );
+      };
+
+      // Closes the navigation
+      const closeNav = () => {
+        navWrap.setAttribute("data-nav", "closed");
+
+        tl.clear()
+          .to(overlay, { autoAlpha: 0 }) // Fade out overlay
+          .to(overlay, { display: "none" }, "<")
+          .to(navWrap, { "--menu-clip": "100%" }, "<")
+          .to(topLine, { rotation: 0 }, "<")
+          .to(bottomLine, { rotation: 0 }, "<")
+          .to(topLine, { y: "-0.125rem" }, "<+=0.3")
+          .to(bottomLine, { y: "0.125rem" }, "<");
+      };
+
+      // Event listeners
+      menuToggles.forEach((toggle) => {
+        toggle.addEventListener("click", () => {
+          // Toggle open/close based on current state
+          state = navWrap.getAttribute("data-nav");
+          if (state === "open") {
+            closeNav();
+          } else {
+            openNav();
+          }
+        });
+      });
+    });
+  </script>
+
+  <style>
+    [load-item],
+    [hero-orb] {
+      visibility: hidden;
+    }
+  </style>
+  <noscript>
+    <style>
+      [load-item],
+      .navigation,
+      [hero-orb] {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
+  </noscript>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      gsap.registerPlugin(ScrollTrigger);
+      if (!document.querySelector(".home_hero")) return; // homepage-only hero animations
+
+      // Hero load-in animation
+      const loadTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".home_hero",
+          toggleActions: "play none play play",
+        },
+      });
+      loadTl
+        .set("[hero-orb]", { scale: 0.8, filter: "blur(1.25rem)" })
+        .to("[hero-orb]", {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 1.5,
+          ease: "power4.inOut",
+        })
+        .from(
+          "[load-item]",
+          {
+            autoAlpha: 0,
+            scale: 0.95,
+            ease: "expo.out",
+            duration: 1.6,
+            stagger: { from: "start", amount: 0.3, ease: "power1.out" },
+          },
+          "<+=0.8",
+        );
+
+      // Hero orb scales up + content fades as you scroll past the hero
+      gsap.to(".home_hero-image", {
+        scale: 3,
+        scrollTrigger: {
+          trigger: ".home_hero.section",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+      gsap.to(".home-hero_content", {
+        autoAlpha: 0,
+        scale: 1.1,
+        scrollTrigger: {
+          trigger: ".home_hero.section",
+          start: "top top",
+          end: "center 25%",
+          scrub: true,
+        },
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="page-wrapper">
+    <div class="global">
+      <div class="global_style w-embed">
+        <style>
+          /* Remove top margin on rich text first child */
+          .w-richtext> :first-child {
+            margin-top: 0;
+          }
+
+          /* Remove bottom margin of rich text last child */
+          .w-richtext> :last-child,
+          .w-richtext ol li:last-child,
+          .w-richtext ul li:last-child {
+            margin-bottom: 0;
+          }
+
+          :is(h1, h2, h3, h4, h5, h6, p):not(#site-footer *):not(footer *) a:not([class]) {
+            text-decoration: underline;
+          }
+
+          video {
+            width: 100%;
+            object-fit: cover;
+          }
+
+          /* Hide an object on the canvas but keep it's order in the DOM. Great for making an invisible space in a grid or flexbox. */
+          .u-invisible {
+            visibility: hidden;
+          }
+
+          /* Applies line clamping to the .u-tlc class */
+          .u-clamp {
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+
+            &.cc-2 {
+              -webkit-line-clamp: 2;
+            }
+
+            &.cc-3 {
+              -webkit-line-clamp: 3;
+            }
+          }
+
+          /* lightbox color */
+          .w-lightbox-backdrop {
+            background: rgba(10, 2, 122, 0.8) !important;
+          }
+
+          @keyframes investors {
+            0% {
+              transform: translateX(0%);
+            }
+
+            100% {
+              transform: translateX(-100%);
+            }
+          }
+
+          .investors_col {
+            animation: investors infinite 30s linear;
+          }
+
+          @keyframes noise {
+            0% {
+              transform: translate3d(0, 9rem, 0);
+            }
+
+            10% {
+              transform: translate3d(-1rem, -4rem, 0);
+            }
+
+            20% {
+              transform: translate3d(-8rem, 2rem, 0);
+            }
+
+            30% {
+              transform: translate3d(9rem, -9rem, 0);
+            }
+
+            40% {
+              transform: translate3d(-2rem, 7rem, 0);
+            }
+
+            50% {
+              transform: translate3d(-9rem, -4rem, 0);
+            }
+
+            60% {
+              transform: translate3d(2rem, 6rem, 0);
+            }
+
+            70% {
+              transform: translate3d(7rem, -8rem, 0);
+            }
+
+            80% {
+              transform: translate3d(-9rem, 1rem, 0);
+            }
+
+            90% {
+              transform: translate3d(6rem, -5rem, 0);
+            }
+
+            100% {
+              transform: translate3d(-7rem, 0, 0);
+            }
+          }
+
+          .noise::after {
+            position: absolute;
+            background-image: url("/vendor/assets/noise.avif");
+            left: -13.75rem;
+            top: -13.75rem;
+            width: calc(100% + 27.5rem);
+            height: calc(100% + 27.5rem);
+            background-position: 50%;
+            content: "";
+            opacity: 0.15;
+            will-change: transform;
+            animation: noise 1.25s steps(2) infinite;
+          }
+
+          .accordion_top.w--current+.accordion_bottom,
+          .accordion_top.w--current+.accordion_bottom:hover,
+          .accordion_top:hover,
+          .accordion_top.w--current {
+            opacity: 1;
+          }
+
+          /*
+  Future coming soon link highlighting.
+  .products.w--current + .btn {
+  opacity: 1;
+  }
+  .products:hover + .btn {
+  opacity: 0.64;
+  }*/
+
+          /* Desktop (992px and above) */
+          @media screen and (min-width: 992px) {
+
+            .u-md-only,
+            .u-sm-only,
+            .u-xs-only {
+              display: none;
+            }
+          }
+
+          /* Tablet (768px to 991px) */
+          @media screen and (min-width: 768px) and (max-width: 991px) {
+
+            .u-sm-only,
+            .u-xs-only,
+            .u-lg-only {
+              display: none;
+            }
+          }
+
+          /* Mobile Landscape (480px to 767px) */
+          @media screen and (min-width: 480px) and (max-width: 767px) {
+
+            .u-lg-only,
+            .u-md-only,
+            .u-xs-only {
+              display: none;
+            }
+          }
+
+          /* Mobile Portrait (up to 479px) */
+          @media screen and (max-width: 479px) {
+
+            .u-lg-only,
+            .u-md-only,
+            .u-sm-only {
+              display: none;
+            }
+          }
+        </style>
+      </div>
+      <div class="global_responsive w-embed">
+        <style>
+          /* Desktop */
+          :root {
+            --menu-clip: 100%;
+          }
+
+          /* Tablet */
+          @media screen and (max-width: 991px) {}
+
+          /* Mobile Portrait */
+          @media screen and (max-width: 479px) {}
+
+          .nav_right-link {
+            .u-icon {
+              transform: rotate(-45deg);
+              transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            }
+          }
+
+          /* Hover effects media query where hover effects only work on devices that CAN hover */
+          @media (hover: hover) {
+            ::-webkit-scrollbar {
+              display: none;
+              height: 0;
+              width: 0;
+            }
+
+            .nav_right-link:hover .u-icon {
+              transform: rotate(0deg);
+            }
+
+            .btn-link::after {
+              transform-origin: right;
+              transform: scaleX(0);
+              transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+              background-color: currentColor;
+              bottom: -0.0625em;
+              content: "";
+              height: 0.0625em;
+              left: 0;
+              position: absolute;
+              width: 100%;
+            }
+
+            .btn-link:hover::after {
+              transform: scaleX(1);
+              transform-origin: left;
+            }
+
+            .btn:hover,
+            .btn_right.cc-input:hover {
+              .btn_icon.cc-1 {
+                transform: translateX(1.6rem);
+              }
+
+              .btn_icon.cc-2 {
+                transform: translateX(0rem);
+              }
+
+              .btn_gradient {
+                transform: scale(1);
+                filter: blur(0rem);
+                opacity: 1;
+                border-radius: 1rem;
+              }
+            }
+          }
+        </style>
+      </div>
+      <div class="noise"></div>
+    </div>
+    <style>
+      .navigation {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding-top: 0.8rem;
+      }
+
+      .evd-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0.35rem clamp(1.25rem, 9.5vw, 11rem) 0;
+      }
+
+      .evd-logo {
+        display: inline-flex;
+        align-items: center;
+        width: clamp(9rem, 9.6vw, 10.15rem);
+        min-height: 2.75rem;
+        padding: 0.48rem 0.6rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition:
+          background-color 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .evd-logo-image {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      /* Glassmorphism Panel Utility */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(12px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.2) !important;
+      }
+
+      .evd-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.15rem;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px) saturate(160%);
+        -webkit-backdrop-filter: blur(12px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 12px;
+        padding: 0.3rem 0.35rem;
+        box-shadow:
+          0 10px 32px rgba(0, 0, 0, 0.32),
+          inset 0 1px 0 rgba(255, 255, 255, 0.22);
+        transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .evd-pill a {
+        font-family:
+          "Geist",
+          -apple-system,
+          sans-serif;
+        font-size: 0.94rem;
+        font-weight: 500;
+        letter-spacing: -0.006em;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.88);
+        padding: 0.55rem 0.88rem;
+        border-radius: 8px;
+        transition:
+          background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+          color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        line-height: 1;
+      }
+
+      .evd-pill a:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+      }
+
+      .evd-pill a.evd-cta {
+        position: relative;
+        margin-left: 0.45rem;
+        padding: 0.24rem;
+        border-radius: 8px;
+        background: #2ecd80;
+      }
+
+      .evd-pill a.evd-cta::before {
+        content: "";
+        position: absolute;
+        left: -0.45rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 1.35rem;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .evd-pill a.evd-cta:hover {
+        background: #39e390;
+        transform: none;
+        box-shadow: 0 0 16px rgba(46, 205, 128, 0.45);
+      }
+
+      .evd-pill .evd-cta-label {
+        font-size: 0.9rem;
+        color: #071018;
+        font-weight: 600;
+        padding: 0.48rem 0.95rem;
+      }
+
+      .evd-burger {
+        display: none;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        width: 3.1rem;
+        height: 3.1rem;
+        background: #0c1622;
+        border-radius: 13px;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      @media screen and (max-width: 1080px) {
+        .evd-pill {
+          display: none !important;
+        }
+
+        .evd-burger {
+          display: flex !important;
+        }
+
+        .evd-menu {
+          display: flex !important;
+        }
+      }
+
+      .evd-burger span {
+        width: 1.2rem;
+        height: 2px;
+        background: #2ecd80;
+        border-radius: 2px;
+      }
+
+      @media screen and (max-width: 768px) {
+        .navigation {
+          padding-top: 0.55rem;
+        }
+
+        .evd-pill {
+          display: none;
+        }
+
+        .evd-burger {
+          display: flex;
+        }
+
+        .evd-nav {
+          box-sizing: border-box;
+          width: calc(100% - 1rem);
+          max-width: 310px;
+          margin: 5px auto 0;
+          padding: 0.4rem 0.45rem;
+          background: #ffffff;
+          border-radius: 16px;
+          box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+        }
+
+        .evd-logo {
+          width: 8.85rem;
+          min-height: 2.5rem;
+          padding: 0.45rem 0.55rem;
+          background-color: #06110e;
+        }
+      }
+
+      .evd-hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        text-decoration: none;
+        background: #0b1622;
+        border-radius: 999px;
+        padding: 0.3rem 0.3rem 0.3rem 0.45rem;
+        transition:
+          background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-hero-secondary {
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-2);
+        text-decoration: none;
+        font-family:
+          "Geist",
+          -apple-system,
+          sans-serif;
+        font-size: 1.05rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+        padding-bottom: 0.2rem;
+        transition:
+          color 0.3s ease,
+          border-color 0.3s ease;
+      }
+
+      .evd-hero-secondary:hover {
+        color: var(--text);
+        border-color: var(--text);
+      }
+
+      .evd-cta-label {
+        display: flex;
+        align-items: center;
+        color: #fff;
+        font-family:
+          "Geist",
+          -apple-system,
+          sans-serif;
+        font-size: 1.02rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        line-height: 1;
+        white-space: nowrap;
+        padding: 0.72rem 0.85rem 0.72rem 1.05rem;
+        transition: color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-cta-arrow {
+        display: grid;
+        place-items: center;
+        flex: none;
+        width: 2.5rem;
+        height: 2.5rem;
+        background: #2ecd80;
+        color: #071018;
+        border-radius: 50%;
+        transition:
+          background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-cta-arrow svg {
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-hero-cta:hover,
+      .evd-hero-cta:focus-visible {
+        background: #2ecd80;
+        transform: translateY(-2px);
+        box-shadow: 0 14px 34px rgba(46, 205, 128, 0.3);
+      }
+
+      .evd-hero-cta:hover .evd-cta-label,
+      .evd-hero-cta:focus-visible .evd-cta-label {
+        color: #071018;
+      }
+
+      .evd-hero-cta:hover .evd-cta-arrow,
+      .evd-hero-cta:focus-visible .evd-cta-arrow {
+        background: #071018;
+        color: #2ecd80;
+      }
+
+      .evd-menu {
+        position: fixed;
+        inset: 6px;
+        border-radius: 18px;
+        background: #101d2b;
+        z-index: 900;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-1.5%) scale(0.985);
+        transition:
+          opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+          visibility 0s linear 0.28s;
+      }
+
+      .evd-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition:
+          opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-menu::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 1200' fill='none' preserveAspectRatio='xMidYMid slice'%3E%3Cg stroke='%23ffffff' stroke-opacity='.06'%3E%3Ccircle cx='90' cy='1130' r='380'/%3E%3Ccircle cx='90' cy='1130' r='560'/%3E%3Ccircle cx='90' cy='1130' r='740'/%3E%3Ccircle cx='90' cy='1130' r='920'/%3E%3Ccircle cx='760' cy='60' r='320'/%3E%3Ccircle cx='760' cy='60' r='480'/%3E%3Ccircle cx='760' cy='60' r='660'/%3E%3Ccircle cx='760' cy='60' r='860'/%3E%3C/g%3E%3C/svg%3E") center / cover no-repeat;
+      }
+
+      .evd-menu-links {
+        display: flex;
+        flex-direction: column;
+        gap: 1.4rem;
+        text-align: center;
+        position: relative;
+      }
+
+      .evd-menu-links a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 2.3rem;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-menu.open .evd-menu-links a {
+        opacity: 1;
+        transform: none;
+      }
+
+      .evd-menu.open .evd-menu-links a:nth-child(1) {
+        transition-delay: 0s;
+      }
+
+      .evd-menu.open .evd-menu-links a:nth-child(2) {
+        transition-delay: 0s;
+      }
+
+      .evd-menu.open .evd-menu-links a:nth-child(3) {
+        transition-delay: 0s;
+      }
+
+      .evd-menu.open .evd-menu-links a:nth-child(4) {
+        transition-delay: 0s;
+      }
+
+      .evd-menu-mail {
+        position: absolute;
+        bottom: 2.4rem;
+        color: #fff;
+        font-size: 1.12rem;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .evd-burger span {
+        transition:
+          transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+          background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      body.evd-open .evd-nav {
+        background: rgba(255, 255, 255, 0.07);
+        box-shadow: none;
+      }
+
+      body.evd-open .evd-logo {
+        background-color: rgba(4, 15, 13, 0.9);
+      }
+
+      body.evd-open .evd-burger {
+        background: transparent;
+        box-shadow: inset 0 0 0 1px #2ecd80;
+      }
+
+      body.evd-open .evd-burger span:first-child {
+        transform: translateY(4px) rotate(45deg);
+      }
+
+      body.evd-open .evd-burger span:last-child {
+        transform: translateY(-4px) rotate(-45deg);
+      }
+
+      body.evd-open {
+        overflow: hidden;
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-menu {
+          display: flex;
+        }
+
+        .evd-diagram {
+          margin-top: 0;
+          max-width: min(16rem, 62vw);
+        }
+
+        .evd-acc .accordion_sticky {
+          justify-content: flex-start;
+          top: 6.5rem;
+          height: calc(100svh - 6.5rem);
+          padding-top: 2.5rem;
+        }
+
+        .evd-acc .accordion_row.row.row-center-vertical.row-center-horizontal {
+          display: flex;
+          flex-flow: column;
+          justify-content: flex-start;
+          gap: 2rem;
+          height: auto;
+        }
+
+        .evd-acc .accordion_row .col {
+          flex: 0 0 auto;
+          margin-bottom: 0;
+        }
+
+        .evd-acc .accordion_right.u-d-flex.cc-vertical.cc-gap-40 {
+          gap: 0;
+        }
+      }
+
+      @media screen and (min-width: 769px) {
+        .evd-acc .accordion_col.col {
+          align-self: center;
+        }
+
+        .evd-acc .accordion_right.u-d-flex.cc-vertical.cc-gap-40 {
+          display: grid;
+          grid-template-columns: 100%;
+          gap: 0;
+          align-content: center;
+        }
+
+        .evd-acc .accordion_right.u-d-flex.cc-vertical.cc-gap-40>.accordion {
+          grid-area: 1 / 1;
+          align-self: center;
+        }
+      }
+
+      .evd-acc {
+        margin-top: -55svh;
+        padding-top: 6svh;
+      }
+
+      .evd-acc h2,
+      .evd-acc h4 {
+        color: #e9f2ed;
+      }
+
+      .evd-acc .u-color-black-secondary,
+      .evd-acc h3.eyebrow {
+        color: rgba(233, 242, 237, 0.6);
+      }
+
+      .evd-acc .u-border.u-bg-black {
+        background-color: rgba(233, 242, 237, 0.35);
+      }
+
+      .evd-acc .accordion_loader {
+        background-color: rgba(233, 242, 237, 0.15);
+      }
+
+      .evd-acc .accordion_loader_progress {
+        background-color: #2ecd80;
+      }
+
+      .evd-diagram {
+        width: 100%;
+        max-width: 30rem;
+        margin: 0 auto;
+      }
+
+      .evd-diagram svg {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .evd-dash {
+        stroke: rgba(246, 242, 231, 0.85);
+        stroke-dasharray: 5 6;
+        fill: none;
+      }
+
+      .evd-dash.evd-faint {
+        stroke: rgba(246, 242, 231, 0.55);
+      }
+
+      .evd-flow {
+        stroke-dasharray: 2 7;
+        animation: evd-flow 1.2s linear infinite;
+      }
+
+      @keyframes evd-flow {
+        to {
+          stroke-dashoffset: -18;
+        }
+      }
+
+      .evd-spin {
+        animation: evd-spin 11s linear infinite;
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      @keyframes evd-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .evd-pulse {
+        animation: evd-pulse 2.2s ease-in-out infinite;
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      @keyframes evd-pulse {
+
+        0%,
+        100% {
+          transform: scale(1);
+        }
+
+        50% {
+          transform: scale(1.1);
+        }
+      }
+
+      .evd-glow {
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+
+      .evd-diagram[data-stage="0"] .g0,
+      .evd-diagram[data-stage="1"] .g1,
+      .evd-diagram[data-stage="2"] .g2 {
+        opacity: 1;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+
+        .evd-flow,
+        .evd-spin,
+        .evd-pulse {
+          animation: none;
+        }
+      }
+
+      .evd-acc h3.eyebrow {
+        font-size: 1rem;
+      }
+
+      .evd-acc .accordion_bottom h4 {
+        font-size: clamp(2.3rem, 1.8vw + 1.6rem, 3.3rem);
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      .evd-acc .accordion_bottom p {
+        font-size: 1.15rem;
+        line-height: 1.6;
+      }
+
+      .home-hero_content h1.h1-xl {
+        font-size: clamp(1.7rem, 2vw + 0.8rem, 2.7rem);
+        line-height: 1.06;
+      }
+
+      .home-hero_content h1.h1-xl span {
+        white-space: nowrap;
+      }
+
+      .evd-acc .accordion_right {
+        position: relative;
+      }
+
+      .evd-steps {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0 clamp(1.5rem, 5vw, 4rem);
+      }
+
+      .evd-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.82rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #ffffff;
+        background: rgba(0, 0, 0, 0.35);
+        padding: 0.55rem 0.95rem;
+        border-radius: 6px;
+      }
+
+      .evd-tag i {
+        width: 0.55rem;
+        height: 0.55rem;
+        background: #2ecd80;
+        border-radius: 2px;
+      }
+
+      .evd-steps-line {
+        position: relative;
+        height: 1px;
+        background: rgba(246, 242, 231, 0.18);
+        margin: 1.5rem calc(-1 * clamp(1.5rem, 5vw, 4rem)) 2.4rem;
+      }
+
+      #evdLineFill {
+        position: absolute;
+        left: 0;
+        top: -0.5px;
+        height: 2px;
+        background: #ffffff;
+        width: 0%;
+      }
+
+      .evd-steps-body {
+        display: grid;
+        grid-template-columns: minmax(auto, 10rem) 1fr;
+        gap: 2.5rem;
+        align-items: start;
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-steps-body {
+          grid-template-columns: 1fr;
+          gap: 1.6rem;
+        }
+
+        .evd-step-texts {
+          justify-self: stretch;
+          max-width: none;
+        }
+      }
+
+      .evd-step-counter {
+        justify-self: start;
+        align-self: start;
+        width: fit-content;
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.9rem;
+        letter-spacing: 0.12em;
+        color: rgba(246, 242, 231, 0.4);
+        border: 1px solid rgba(246, 242, 231, 0.3);
+        border-radius: 999px;
+        padding: 0.6rem 1.25rem;
+      }
+
+      .evd-step-counter b {
+        color: #ffffff;
+        font-weight: 400;
+      }
+
+      .evd-step-texts {
+        display: grid;
+        overflow: hidden;
+        justify-self: end;
+        width: 100%;
+        max-width: 44rem;
+      }
+
+      .evd-step {
+        grid-area: 1 / 1;
+        margin: 0;
+        font-size: clamp(1.5rem, 1.8vw + 0.9rem, 2.4rem);
+        line-height: 1.25;
+        letter-spacing: -0.015em;
+        font-weight: 500;
+        color: #ffffff;
+        will-change: transform, opacity;
+      }
+
+      .evd-word {
+        opacity: 0.28;
+      }
+
+      .evd-acc .accordion_sticky {
+        justify-content: flex-start;
+        top: 0;
+        height: 100svh;
+        padding-top: 7.5rem;
+      }
+
+      .evd-light {
+        position: relative;
+        z-index: 5;
+        background: #ffffff;
+        color: #14100a;
+        margin-top: -45svh;
+        border-radius: 26px 26px 0 0;
+        padding: 3.5rem clamp(1.5rem, 5vw, 4rem) 3.5rem;
+      }
+
+      .evd-light-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 3rem;
+        max-width: 82rem;
+        margin: 0 auto;
+        align-items: center;
+      }
+
+      .evd-light-left {
+        display: grid;
+        place-items: center;
+      }
+
+      .evd-ui-slot {
+        width: 100%;
+        max-width: 27rem;
+        border: 1px solid rgba(20, 16, 10, 0.1);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #0b1420;
+        box-shadow: 0 30px 70px -30px rgba(7, 16, 24, 0.55);
+      }
+
+      .evd-ui-bar {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 11px 14px;
+        background: #0d1826;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .evd-ui-bar i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.16);
+      }
+
+      .evd-ui-title {
+        margin-left: 8px;
+        font-size: 0.82rem;
+        letter-spacing: 0.01em;
+        color: rgba(233, 242, 237, 0.5);
+        font-weight: 500;
+      }
+
+      .evd-ui-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.4rem;
+        background: radial-gradient(120% 100% at 100% 0%,
+            #12283a 0%,
+            #0b1420 62%);
+      }
+
+      .evd-ui-scorecard {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .evd-ui-ring {
+        position: relative;
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: conic-gradient(#2ecd80 0 0.72turn,
+            rgba(255, 255, 255, 0.1) 0.72turn 1turn);
+      }
+
+      .evd-ui-ring::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 50%;
+        background: #0b1420;
+      }
+
+      .evd-ui-ring b {
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        font-size: 1.12rem;
+        font-weight: 600;
+      }
+
+      .evd-ui-scoremeta {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .evd-ui-scorelbl {
+        color: rgba(233, 242, 237, 0.62);
+        font-size: 1rem;
+      }
+
+      .evd-ui-scoretag {
+        align-self: flex-start;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #23d18b;
+        background: rgba(35, 209, 139, 0.12);
+        padding: 2px 7px;
+        border-radius: 5px;
+      }
+
+      .evd-ui-tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+      }
+
+      .evd-ui-tile {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 10px;
+        padding: 0.7rem;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .evd-ui-tile b {
+        color: #fff;
+        font-size: 1.22rem;
+        font-weight: 600;
+      }
+
+      .evd-ui-tile span {
+        color: rgba(233, 242, 237, 0.5);
+        font-size: 0.8rem;
+      }
+
+      .evd-ui-bars {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .evd-ui-barrow {
+        display: grid;
+        grid-template-columns: 4.5rem 1fr;
+        align-items: center;
+        gap: 0.7rem;
+      }
+
+      .evd-ui-barrow>span:first-child {
+        color: rgba(233, 242, 237, 0.6);
+        font-size: 0.82rem;
+      }
+
+      .evd-ui-track {
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+
+      .evd-ui-track i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #2ecd80, #23d18b);
+        border-radius: 3px;
+      }
+
+      .evd-light-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.4rem;
+      }
+
+      .evd-tag-dark {
+        background: rgba(20, 16, 10, 0.06);
+        color: #14100a;
+      }
+
+      .evd-tag-dark i {
+        background: #2ecd80;
+      }
+
+      .evd-light-h {
+        margin: 0;
+        font-size: clamp(2rem, 2.4vw + 1rem, 3.4rem);
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+        font-weight: 500;
+      }
+
+      .evd-muted {
+        color: rgba(20, 16, 10, 0.28);
+      }
+
+      .evd-light-h .evd-muted {
+        color: #2ecd80;
+      }
+
+      .evd-light p {
+        margin: 0;
+        max-width: 44rem;
+        font-size: 1.12rem;
+        line-height: 1.6;
+        color: rgba(20, 16, 10, 0.62);
+      }
+
+      .evd-light-cta .evd-cta-label {
+        color: #ffffff;
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-light-grid {
+          grid-template-columns: 1fr;
+          gap: 1.2rem;
+        }
+
+        .evd-light-cta {
+          display: flex;
+          width: fit-content;
+          margin: 0 auto;
+        }
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+
+        html,
+        a,
+        button,
+        .evd-hero-cta,
+        .evd-feat-item,
+        [role="button"] {
+          cursor: none;
+        }
+
+        .evd-cur-dot {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #2ecd80;
+          z-index: 100000;
+          pointer-events: none;
+          transform: translate(-50%, -50%);
+          transition:
+            width 0.2s ease,
+            height 0.2s ease,
+            background-color 0.2s ease;
+        }
+
+        body.evd-cur-hover .evd-cur-dot {
+          width: 20px;
+          height: 20px;
+          background: rgba(46, 205, 128, 0.55);
+        }
+
+        body.evd-cur-down .evd-cur-dot {
+          width: 7px;
+          height: 7px;
+        }
+      }
+
+      body.evd-on-light .evd-logo {
+        background-color: #06110e;
+        box-shadow: 0 10px 28px rgba(4, 15, 13, 0.18);
+      }
+
+      .evd-proof {
+        position: relative;
+        z-index: 5;
+        background: #ffffff;
+        color: #14100a;
+        padding: 0 clamp(1.5rem, 5vw, 4rem) 4rem;
+      }
+
+      .evd-proof-head {
+        max-width: 82rem;
+        margin: 0 auto 2.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.4rem;
+      }
+
+      .evd-proof-h {
+        margin: 0.6rem 0 0;
+        font-size: clamp(1.8rem, 2.2vw + 1rem, 2.8rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        font-weight: 500;
+        max-width: 20ch;
+      }
+
+      .evd-proof-sub {
+        margin: 0;
+        font-size: 1.12rem;
+        line-height: 1.5;
+        color: rgba(20, 16, 10, 0.55);
+        max-width: 34rem;
+      }
+
+      .evd-cards {
+        max-width: none;
+        margin: 0 calc(-1 * clamp(1.5rem, 5vw, 4rem));
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        align-items: stretch;
+      }
+
+      .evd-card {
+        position: relative;
+        display: flex;
+      }
+
+      .evd-card--lime {
+        background: #2ecd80;
+        color: #14100a;
+      }
+
+      .evd-card--dark {
+        background: #0c1622;
+        color: #ffffff;
+      }
+
+      .evd-card--stone {
+        background: #ffffff;
+        color: #14100a;
+      }
+
+      .evd-card-inner {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 2rem clamp(1.5rem, 5vw, 4rem) 2.2rem;
+        min-height: 16rem;
+      }
+
+      .evd-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .evd-card-num {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        opacity: 0.7;
+        padding-top: 0.3rem;
+      }
+
+      .evd-3d {
+        width: 6.5rem;
+        height: 6.5rem;
+        cursor: grab;
+        touch-action: none;
+        display: block;
+        margin: -0.4rem 0 0 -0.6rem;
+      }
+
+      .evd-card-flat {
+        width: 1.9rem;
+        height: 1.9rem;
+        color: inherit;
+      }
+
+      .evd-card-flat svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .evd-3d.grab {
+        cursor: grabbing;
+      }
+
+      .evd-card-bottom {
+        margin-top: 1.3rem;
+      }
+
+      .evd-card-title {
+        margin: 0 0 0.7rem;
+        font-size: 1.6rem;
+        font-weight: 500;
+        letter-spacing: -0.015em;
+      }
+
+      .evd-card-quote {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.5;
+        opacity: 0.75;
+        min-height: 4.4em;
+      }
+
+      .evd-card-meta {
+        display: block;
+        margin-top: 1.2rem;
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.55;
+      }
+
+      @media screen and (max-width: 900px) {
+        .evd-cards {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+
+        .evd-cards>*:nth-child(2),
+        .evd-cards>*:nth-child(3) {
+          margin-top: 0;
+        }
+
+        .evd-card-inner {
+          min-height: 14rem;
+        }
+      }
+
+      /* ---- feature sections ---- */
+      .evd-feat {
+        background: #ffffff;
+        color: #14100a;
+        padding: 4rem clamp(1.5rem, 5vw, 4rem);
+      }
+
+      .evd-feat-inner {
+        max-width: 82rem;
+        margin: 0 auto;
+      }
+
+      .evd-feat-bigtitle {
+        margin: 0 0 2rem;
+        font-size: clamp(2rem, 2.6vw + 1rem, 3rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+        max-width: 22ch;
+      }
+
+      .evd-feat-subtitle {
+        margin: 0 0 0.5rem;
+        font-size: 1.22rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .evd-feat-grid {
+        display: grid;
+        grid-template-columns: 0.7fr 2fr;
+        gap: 2.5rem;
+        align-items: stretch;
+      }
+
+      .evd-feat--mirror .evd-feat-grid {
+        grid-template-columns: 2fr 0.7fr;
+      }
+
+      .evd-feat+.evd-feat {
+        padding-top: 0;
+      }
+
+      .evd-trust {
+        background: #ffffff;
+        color: #14100a;
+        padding: 4rem 0 0;
+        overflow: hidden;
+      }
+
+      .evd-trust-head {
+        max-width: 82rem;
+        margin: 0 auto 2.25rem;
+        padding: 0 clamp(1.5rem, 5vw, 4rem);
+        text-align: center;
+      }
+
+      .evd-trust-title {
+        margin: 0 auto;
+        font-size: clamp(1.7rem, 2.4vw + 1rem, 3rem);
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        font-weight: 600;
+        max-width: none;
+        text-wrap: balance;
+      }
+
+      .evd-trust-items {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+      }
+
+      .evd-trust-item {
+        display: flex;
+        flex-direction: column;
+        padding: 2rem clamp(1.5rem, 5vw, 4rem) 2.2rem;
+        min-height: 14rem;
+      }
+
+      .evd-trust-item:nth-child(1) {
+        background: #2ecd80;
+        color: #071018;
+      }
+
+      .evd-trust-item:nth-child(2) {
+        background: #0b1420;
+        color: #e9f2ed;
+      }
+
+      .evd-trust-item:nth-child(3) {
+        background: #ffffff;
+        color: #14100a;
+      }
+
+      .evd-trust-ico {
+        color: inherit;
+        width: 1.9rem;
+        height: 1.9rem;
+      }
+
+      .evd-trust-ico svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .evd-trust-item h3 {
+        margin: 1.3rem 0 0.5rem;
+        color: inherit;
+        font-size: 1.4rem;
+        line-height: 1.15;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+
+      .evd-trust-item p {
+        margin: 0;
+        color: inherit;
+        opacity: 0.68;
+        font-size: 1.05rem;
+        line-height: 1.55;
+      }
+
+      .evd-trust-tag {
+        display: block;
+        margin-top: 1rem;
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: inherit;
+        opacity: 0.55;
+      }
+
+      @media screen and (max-width: 760px) {
+        .evd-trust-items {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .evd-prod {
+        background: #ffffff;
+        color: #14100a;
+        padding: 4.5rem clamp(1.5rem, 5vw, 4rem);
+      }
+
+      .evd-prod-inner {
+        max-width: 82rem;
+        margin: 0 auto;
+      }
+
+      .evd-prod-title {
+        margin: 0 0 2rem;
+        font-size: clamp(2.1rem, 2.8vw + 1rem, 3.3rem);
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        font-weight: 600;
+      }
+
+      .evd-prod-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+
+      .evd-prod-card {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .evd-prod-visual {
+        position: relative;
+        aspect-ratio: 16 / 11;
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 1.4rem;
+        border: 1px solid rgba(20, 16, 10, 0.08);
+        background: radial-gradient(120% 90% at 50% -10%,
+            #163149 0%,
+            #0a1626 46%,
+            #050d18 100%);
+      }
+
+      .evd-prod-visual--1 {
+        background: radial-gradient(80% 80% at 50% 45%,
+            #1a3a4a 0%,
+            #0a1826 55%,
+            #060d18 100%);
+      }
+
+      .evd-prod-visual--2 {
+        background: radial-gradient(80% 80% at 60% 40%,
+            #123a2f 0%,
+            #0a1c18 55%,
+            #060f0d 100%);
+      }
+
+      .evd-prod-mock {
+        width: 82%;
+        background: rgba(12, 22, 36, 0.5);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 1.1rem 1.2rem;
+        box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
+      }
+
+      .evd-prod-mock-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.9rem;
+        color: rgba(233, 242, 237, 0.75);
+        margin-bottom: 0.9rem;
+      }
+
+      .evd-prod-stop {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .evd-prod-stop i {
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 50%;
+        background: #fff;
+      }
+
+      .evd-prod-wave {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        height: 2.6rem;
+      }
+
+      .evd-prod-wave span {
+        flex: 1;
+        background: rgba(233, 242, 237, 0.55);
+        border-radius: 2px;
+        min-height: 3px;
+      }
+
+      .evd-prod-mock--chart {
+        width: 86%;
+      }
+
+      .evd-prod-mock-head {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.82rem;
+        color: rgba(233, 242, 237, 0.5);
+      }
+
+      .evd-prod-mock-num {
+        font-size: 1.8rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0.1rem 0 0.6rem;
+      }
+
+      .evd-prod-spark {
+        width: 100%;
+        height: 3rem;
+        display: block;
+        margin-bottom: 0.9rem;
+      }
+
+      .evd-prod-table {
+        font-size: 0.9rem;
+      }
+
+      .evd-prod-trow {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr;
+        padding: 0.4rem 0;
+        color: rgba(233, 242, 237, 0.8);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .evd-prod-thead {
+        color: rgba(233, 242, 237, 0.4);
+        border-top: none;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .evd-prod-tnow {
+        color: #23d18b;
+      }
+
+      .evd-prod-tag {
+        font-size: 0.85rem;
+        color: rgba(233, 242, 237, 0.5);
+        margin-bottom: 0.5rem;
+      }
+
+      .evd-prod-tag--live {
+        color: #23d18b;
+      }
+
+      .evd-prod-card h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.6rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .evd-prod-card p {
+        margin: 0 0 1.3rem;
+        font-size: 1.05rem;
+        line-height: 1.55;
+        color: rgba(20, 16, 10, 0.6);
+        max-width: 26rem;
+      }
+
+      .evd-prod-btn {
+        align-self: flex-start;
+        background: #101d2b;
+        color: #fff;
+        padding: 0.7rem 1.5rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background 0.2s ease;
+      }
+
+      .evd-prod-btn:hover {
+        background: #000;
+      }
+
+      @media screen and (max-width: 760px) {
+        .evd-prod-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .evd-feat--mirror .evd-feat-bigtitle {
+        text-align: right;
+        margin-left: auto;
+      }
+
+      .evd-feat-left .evd-tag {
+        background: rgba(233, 242, 237, 0.08);
+        color: rgba(233, 242, 237, 0.85);
+      }
+
+      .evd-feat-title {
+        margin: 1rem 0 0.6rem;
+        font-size: clamp(1.6rem, 1.4vw + 1.1rem, 2.2rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 500;
+      }
+
+      .evd-feat-sub {
+        margin: 0;
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: rgba(20, 16, 10, 0.55);
+        max-width: 30rem;
+      }
+
+      .evd-feat-list {
+        margin-top: 1.6rem;
+      }
+
+      .evd-feat-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: none;
+        border: none;
+        border-top: 1px solid rgba(20, 16, 10, 0.13);
+        padding: 1.55rem 0 0;
+        cursor: pointer;
+        color: inherit;
+        font: inherit;
+      }
+
+      .evd-feat-h {
+        display: block;
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        color: rgba(20, 16, 10, 0.45);
+        transition: color 0.3s ease;
+      }
+
+      .evd-feat-item.active .evd-feat-h {
+        color: #14100a;
+      }
+
+      .evd-feat-item:hover .evd-feat-h {
+        color: rgba(20, 16, 10, 0.8);
+      }
+
+      .evd-feat-d {
+        display: block;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: rgba(20, 16, 10, 0.55);
+        transition:
+          max-height 0.5s ease,
+          opacity 0.4s ease,
+          margin 0.5s ease;
+      }
+
+      .evd-feat-item.active .evd-feat-d {
+        max-height: 6rem;
+        opacity: 1;
+        margin: 0.5rem 0 0;
+      }
+
+      .evd-feat-bar {
+        display: block;
+        height: 1.5px;
+        margin-top: 1.45rem;
+        background: rgba(20, 16, 10, 0.12);
+        overflow: hidden;
+      }
+
+      .evd-feat-bar>span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: #2ecd80;
+      }
+
+      .evd-feat-visual {
+        position: relative;
+        height: 100%;
+      }
+
+      .evd-glass {
+        width: min(78%, 30rem);
+        background: rgba(12, 22, 36, 0.5);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6);
+      }
+
+      .evd-glass-head {
+        color: rgba(233, 242, 237, 0.6);
+        font-size: 1rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .evd-glass-num {
+        color: #fff;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin-bottom: 1.2rem;
+      }
+
+      .evd-glass-num span {
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: rgba(233, 242, 237, 0.5);
+        margin-left: 0.5rem;
+        letter-spacing: 0;
+      }
+
+      .evd-glass-tiles {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.7rem;
+      }
+
+      .evd-glass-tile {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 12px;
+        padding: 0.9rem;
+      }
+
+      .evd-glass-ico {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: rgba(46, 205, 128, 0.14);
+        color: #2ecd80;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        margin-bottom: 0.9rem;
+      }
+
+      .evd-glass-tl {
+        color: rgba(233, 242, 237, 0.5);
+        font-size: 0.82rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .evd-glass-tv {
+        color: #fff;
+        font-size: 1.22rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .evd-feat-panels {
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 40px 90px -40px rgba(6, 13, 24, 0.5);
+      }
+
+      .evd-feat-panel {
+        position: absolute;
+        inset: 0;
+        padding: 1.6rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.55rem;
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+        pointer-events: none;
+      }
+
+      .evd-feat-panel.active {
+        opacity: 1;
+        transform: none;
+      }
+
+      .evd-mock-title {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.8rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(233, 242, 237, 0.5);
+        margin-bottom: 0.5rem;
+      }
+
+      .evd-mock-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        background: rgba(233, 242, 237, 0.05);
+        border: 1px solid rgba(233, 242, 237, 0.08);
+        border-radius: 9px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.92rem;
+        color: rgba(233, 242, 237, 0.85);
+      }
+
+      .evd-mock-tag {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.06em;
+        color: #14100a;
+        background: #2ecd80;
+        padding: 0.22rem 0.4rem;
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      .evd-mock-txt {
+        color: rgba(233, 242, 237, 0.8);
+      }
+
+      .evd-bar {
+        display: grid;
+        grid-template-columns: 4.5rem 1fr auto;
+        align-items: center;
+        gap: 0.7rem;
+        font-size: 0.9rem;
+        color: rgba(233, 242, 237, 0.7);
+      }
+
+      .evd-bar-l {
+        white-space: nowrap;
+      }
+
+      .evd-bar-t {
+        height: 6px;
+        border-radius: 3px;
+        background: linear-gradient(90deg, #2ecd80, #23d18b);
+      }
+
+      .evd-bar b {
+        font-variant-numeric: tabular-nums;
+        color: #ffffff;
+        font-weight: 500;
+      }
+
+      .evd-mock-approve {
+        text-align: left;
+      }
+
+      .evd-mock-p {
+        margin: 0.2rem 0 0.9rem;
+        font-size: 1.05rem;
+        color: rgba(233, 242, 237, 0.85);
+      }
+
+      .evd-mock-btns {
+        display: flex;
+        gap: 0.6rem;
+      }
+
+      .evd-mock-approve-btn {
+        background: #2ecd80;
+        color: #14100a;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .evd-mock-deny-btn {
+        border: 1px solid rgba(233, 242, 237, 0.2);
+        color: rgba(233, 242, 237, 0.7);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+
+      .evd-mock-note {
+        margin-top: 0.9rem;
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: rgba(233, 242, 237, 0.4);
+      }
+
+      .evd-mock-ev {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 1rem;
+        color: rgba(233, 242, 237, 0.8);
+      }
+
+      .evd-mock-radar {
+        position: relative;
+        width: 7rem;
+        height: 7rem;
+        margin: 0.5rem auto;
+      }
+
+      .evd-mock-radar span {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        border: 1px solid rgba(46, 205, 128, 0.35);
+        border-radius: 50%;
+      }
+
+      .evd-mock-radar span:nth-child(1) {
+        width: 100%;
+        height: 100%;
+      }
+
+      .evd-mock-radar span:nth-child(2) {
+        width: 66%;
+        height: 66%;
+      }
+
+      .evd-mock-radar span:nth-child(3) {
+        width: 33%;
+        height: 33%;
+      }
+
+      .evd-mock-radar b {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #2ecd80;
+      }
+
+      @media screen and (max-width: 860px) {
+        .evd-feat-grid {
+          grid-template-columns: 1fr !important;
+          gap: 2rem;
+        }
+
+        .evd-feat--mirror .evd-feat-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .evd-feat--mirror .evd-feat-bigtitle {
+          text-align: left;
+        }
+
+        .evd-feat-visual {
+          min-height: 0;
+        }
+
+        .evd-feat-panels {
+          min-height: 0 !important;
+        }
+
+        .evd-feat:not(.evd-feat--mirror) .evd-feat-visual {
+          order: -1;
+          margin-bottom: 1.5rem;
+        }
+
+        .evd-proof {
+          padding-bottom: 3rem;
+        }
+
+        .evd-proof-head {
+          margin-bottom: 1.75rem;
+          gap: 1rem;
+        }
+
+        .evd-feat,
+        .evd-prod {
+          padding-right: 1rem;
+          padding-left: 1rem;
+        }
+
+        .evd-feat {
+          padding-top: 3rem;
+          padding-bottom: 3rem;
+        }
+
+        .evd-prod {
+          padding-top: 3rem;
+          padding-bottom: 3rem;
+        }
+
+        .evd-feat-bigtitle,
+        .evd-prod-title,
+        .evd-trust-title {
+          text-wrap: balance;
+        }
+
+        .evd-card-inner,
+        .evd-trust-item {
+          min-height: 0;
+        }
+
+        .evd-card-quote {
+          min-height: 0;
+        }
+
+        .evd-trust-head {
+          margin-bottom: 1.5rem;
+        }
+
+        .evd-prod-visual {
+          border-radius: 8px;
+        }
+      }
+    </style>
+    <style>
+      body,
+      .home-hero_content,
+      p,
+      .evd-feat-sub,
+      .evd-proof-sub,
+      .evd-light p,
+      .evd-card-quote,
+      .evd-feat-h,
+      .h1-xl,
+      .home-hero_content h1.h1-xl,
+      .evd-light-h,
+      .evd-proof-h,
+      .evd-feat-title,
+      .evd-step,
+      .evd-card-title {
+        font-family:
+          "Geist",
+          -apple-system,
+          "system-ui",
+          "Segoe UI",
+          Roboto,
+          "Helvetica Neue",
+          sans-serif;
+      }
+
+      body {
+        letter-spacing: 0;
+      }
+
+      body * {
+        letter-spacing: 0 !important;
+      }
+
+      p,
+      .evd-feat-sub,
+      .evd-proof-sub,
+      .evd-light p,
+      .evd-card-quote {
+        line-height: 1.55;
+        letter-spacing: -0.01em;
+      }
+
+      /* Linear-matched display: big, tight line-height, negative tracking, medium weight */
+      .home-hero_content h1.h1-xl {
+        font-size: clamp(2.5rem, 3.4vw + 1rem, 3.9rem);
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        font-weight: 400;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .home-hero_content {
+        row-gap: 2.4rem;
+      }
+
+      .evd-light-h {
+        font-size: clamp(1.9rem, 2.4vw + 1rem, 2.85rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+      }
+
+      .evd-proof-h {
+        font-size: clamp(1.9rem, 2.4vw + 1rem, 2.85rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+      }
+
+      .evd-feat-title {
+        font-size: clamp(1.6rem, 1.4vw + 1rem, 2.15rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+      }
+
+      .evd-step {
+        font-size: clamp(1.9rem, 1.7vw + 0.95rem, 2.9rem);
+        line-height: 1.26;
+        letter-spacing: -0.02em;
+        font-weight: 400;
+      }
+
+      .evd-card-title {
+        font-size: 1.4rem;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+        font-weight: 600;
+      }
+
+      .evd-feat-h {
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      /* right-side section scroll spy (shared by home + every shell page; auto-hides when < 3 sections) */
+      .evd-spy {
+        position: fixed;
+        right: 1.4rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 500;
+        display: none;
+        flex-direction: column;
+        gap: 0.9rem;
+        align-items: flex-end;
+      }
+
+      .evd-spy.is-ready {
+        display: flex;
+      }
+
+      .evd-spy-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.15rem 0;
+        color: inherit;
+      }
+
+      .evd-spy-label {
+        font-family:
+          "Geist",
+          -apple-system,
+          sans-serif;
+        font-size: 0.76rem;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+        color: #0b1622;
+        background: rgba(255, 255, 255, 0.92);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        padding: 0.28rem 0.65rem;
+        border-radius: 999px;
+        white-space: nowrap;
+        box-shadow: 0 6px 20px rgba(4, 10, 18, 0.16);
+        opacity: 0;
+        transform: translateX(6px);
+        transition:
+          opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        pointer-events: none;
+      }
+
+      .evd-spy-dot {
+        flex: none;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(140, 148, 152, 0.55);
+        transition:
+          background 0.25s ease,
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+
+      .evd-spy-item:hover .evd-spy-label,
+      .evd-spy-item.is-active .evd-spy-label {
+        opacity: 1;
+        transform: none;
+      }
+
+      .evd-spy-item:hover .evd-spy-dot {
+        background: #2ecd80;
+      }
+
+      .evd-spy-item.is-active .evd-spy-dot {
+        background: #2ecd80;
+        transform: scale(1.5);
+        box-shadow: 0 0 0 4px rgba(46, 205, 128, 0.2);
+      }
+
+      @media (max-width: 1100px) {
+        .evd-spy {
+          display: none !important;
+        }
+      }
+
+      .home_hero-image {
+        will-change: transform;
+      }
+
+      .home-hero_content {
+        will-change: transform, opacity;
+      }
+
+      [hero-orb] {
+        will-change: transform, filter;
+      }
+
+      .evd-prod-visual img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .evd-feat-panels img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      @media screen and (max-width: 600px) {
+        .home-hero_content h1.h1-xl {
+          font-size: clamp(1.85rem, 8.5vw, 2.5rem) !important;
+          line-height: 1.08 !important;
+        }
+
+        .home-hero_content h1.h1-xl span {
+          white-space: normal !important;
+        }
+      }
+    </style>
+    <style id="evd-home-production-polish">
+      html,
+      body {
+        overflow-x: clip;
+      }
+
+      /* =========================================================
+         HOME FULL-WIDTH STICKY STACKING SECTIONS
+         ========================================================= */
+      .home-flow-section {
+        background: #071018;
+        color: #ffffff;
+        padding: clamp(2rem, 4vw, 3.5rem) 0 0;
+        position: relative;
+        width: 100%;
+        z-index: 4;
+      }
+
+      .home-stack-container {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
+        padding-bottom: 8vh;
+      }
+
+      .home-stack-row {
+        position: sticky;
+        top: clamp(7.5rem, 14vh, 10rem);
+        z-index: calc(var(--stack-idx, 0) + 2);
+        width: 100%;
+        background: #071018;
+        border-radius: 0;
+        padding: clamp(3rem, 5vh, 4.5rem) clamp(2rem, 6vw, 6.5rem);
+        margin-bottom: 28vh;
+        min-height: 24rem;
+        display: flex;
+        align-items: center;
+        transform-origin: center top;
+        transition: opacity 0.08s ease-out;
+        will-change: opacity;
+      }
+
+      .home-stack-row:first-child {
+        border-top: none;
+        box-shadow: none;
+      }
+
+      .home-stack-row:not(:first-child) {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.45);
+      }
+
+      .home-stack-row:last-child {
+        margin-bottom: 60vh;
+      }
+
+      .home-stack-row-inner {
+        width: 100%;
+        display: grid;
+        grid-template-columns: minmax(200px, 30%) 1fr;
+        gap: clamp(3rem, 6vw, 8rem);
+        align-items: start;
+      }
+
+      .home-stack-left {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        min-height: 13rem;
+      }
+
+      .home-stack-label {
+        font-family: 'Roobert', 'Geist', sans-serif;
+        font-size: clamp(1.2rem, 1.5vw, 1.45rem);
+        font-weight: 500;
+        color: #2ecd80;
+        line-height: 1.35;
+        letter-spacing: -0.01em;
+      }
+
+      .home-stack-num {
+        font-family: 'Aeonik Mono', ui-monospace, monospace;
+        font-size: clamp(1.4rem, 2vw, 1.85rem);
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.35);
+        margin-top: auto;
+        padding-top: 2.5rem;
+        line-height: 1;
+      }
+
+      .home-stack-right {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 52rem;
+        margin-left: auto;
+      }
+
+      .home-stack-text {
+        font-family: 'Roobert', 'Geist', sans-serif;
+        font-size: clamp(1.65rem, 2.4vw, 2.3rem);
+        line-height: 1.28;
+        letter-spacing: -0.015em;
+        font-weight: 500;
+        color: #ffffff;
+        margin: 0;
+      }
+
+      @media screen and (max-width: 768px) {
+        .home-stack-row-inner {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+
+        .home-stack-left {
+          min-height: auto;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: baseline;
+        }
+
+        .home-stack-num {
+          padding-top: 0;
+        }
+
+        .home-stack-row {
+          top: 5.5rem;
+          padding: 2rem 1.25rem;
+          margin-bottom: 25vh;
+        }
+
+        .home-stack-text {
+          font-size: 1.3rem;
+        }
+      }
+
+      body * {
+        letter-spacing: 0 !important;
+      }
+
+      .navigation {
+        padding-top: 0.35rem;
+        pointer-events: none;
+      }
+
+      .evd-nav {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 86rem;
+        min-height: 4.25rem;
+        margin: 0 auto;
+        padding: 0.25rem 2rem;
+        pointer-events: none;
+      }
+
+      .evd-logo,
+      .evd-pill,
+      .evd-burger {
+        pointer-events: auto;
+      }
+
+      .evd-logo {
+        width: 9.6rem;
+      }
+
+      .evd-pill a:not(.evd-cta)[aria-current="page"] {
+        color: #2ecd80;
+        background: rgba(46, 205, 128, 0.14);
+        box-shadow: inset 0 -2px 0 #2ecd80;
+      }
+
+      body.evd-on-light .evd-pill {
+        background: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(12px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 10px 32px rgba(4, 10, 18, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+      }
+
+      body.evd-on-light .evd-pill a {
+        color: #0b1622;
+      }
+
+      body.evd-on-light .evd-pill a:hover {
+        background: rgba(7, 16, 24, 0.06);
+        color: #000000;
+      }
+
+      body.evd-on-light .evd-pill a:not(.evd-cta)[aria-current="page"] {
+        color: #071018;
+        background: rgba(46, 205, 128, 0.18);
+      }
+
+      body.evd-on-light .evd-pill a.evd-cta::before {
+        background: rgba(7, 16, 24, 0.15);
+      }
+
+      .evd-menu-links a[aria-current="page"] {
+        color: #2ecd80;
+        background: rgba(46, 205, 128, 0.08);
+        box-shadow: inset 3px 0 0 #2ecd80;
+      }
+
+      .evd-pill a,
+      .evd-pill a.evd-cta,
+      .evd-pill .evd-cta-label {
+        border-radius: 6px;
+      }
+
+      .evd-logo:focus-visible,
+      .evd-pill a:focus-visible,
+      .evd-burger:focus-visible,
+      .evd-menu a:focus-visible {
+        outline: 3px solid #2ecd80;
+        outline-offset: 3px;
+      }
+
+      .home-hero_content h1.h1-xl {
+        max-width: 15ch;
+        margin-inline: auto;
+        font-size: 3.9rem !important;
+        line-height: 1.05 !important;
+        text-wrap: balance;
+      }
+
+      .evd-light-h,
+      .evd-proof-h,
+      .evd-prod-title,
+      .evd-feat-bigtitle,
+      .evd-trust-title {
+        font-size: 2.75rem !important;
+        line-height: 1.1 !important;
+        text-wrap: balance;
+      }
+
+      .evd-feat-title {
+        font-size: 2.1rem !important;
+      }
+
+      .evd-step {
+        font-size: 2.65rem !important;
+      }
+
+      .evd-prod,
+      .evd-proof,
+      .evd-feat,
+      .evd-trust {
+        scroll-margin-top: 5.25rem;
+      }
+
+      .evd-trust-item,
+      .evd-feat-panels {
+        border-radius: 8px !important;
+      }
+
+      /* =========================================================
+         DARK OBSIDIAN ASYMMETRIC CARDS (WHY EVADA / EVD-PROOF)
+         ========================================================= */
+      .evd-proof {
+        position: relative;
+        z-index: 5;
+        background: #f4f7f5 !important;
+        color: #071018 !important;
+        padding: clamp(3.5rem, 5vw, 4.75rem) clamp(1.5rem, 5vw, 4rem) !important;
+      }
+
+      .evd-proof-inner {
+        max-width: 65rem;
+        margin: 0 auto;
+      }
+
+      .evd-proof-grid {
+        display: grid;
+        grid-template-columns: 1.25fr 1fr;
+        gap: 1.25rem;
+        align-items: stretch;
+      }
+
+      .evd-proof-left-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .evd-proof-col-right {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .evd-fin-card {
+        border-radius: 24px;
+        padding: clamp(1.5rem, 2.2vw, 1.95rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+
+      .evd-fin-card--tall {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      /* Card 1: Black */
+      .evd-fin-card--black {
+        background: #080d14;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+      }
+      .evd-fin-card--black:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      }
+      .evd-fin-card--black .evd-fin-num {
+        color: #ffffff;
+      }
+      .evd-fin-card--black .evd-fin-title {
+        color: #ffffff;
+      }
+      .evd-fin-card--black .evd-fin-desc {
+        color: rgba(255, 255, 255, 0.72);
+      }
+      .evd-fin-card--black .evd-fin-divider {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .evd-fin-card--black .evd-fin-meta {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      /* Card 2: White */
+      .evd-fin-card--white {
+        background: #ffffff;
+        color: #071018;
+        border: 1px solid rgba(7, 16, 24, 0.16);
+        box-shadow: 0 14px 34px rgba(7, 16, 24, 0.08);
+      }
+      .evd-fin-card--white:hover {
+        transform: translateY(-3px);
+        border-color: rgba(7, 16, 24, 0.35);
+        box-shadow: 0 20px 45px rgba(7, 16, 24, 0.14);
+      }
+      .evd-fin-card--white .evd-fin-num {
+        color: #071018;
+      }
+      .evd-fin-card--white .evd-fin-title {
+        color: #071018;
+      }
+      .evd-fin-card--white .evd-fin-desc {
+        color: rgba(7, 16, 24, 0.75);
+      }
+      .evd-fin-card--white .evd-fin-divider {
+        background: rgba(7, 16, 24, 0.12);
+      }
+      .evd-fin-card--white .evd-fin-meta {
+        color: rgba(7, 16, 24, 0.55);
+      }
+
+      /* Card 3: Green */
+      .evd-fin-card--green {
+        background: #2ecd80;
+        color: #071018;
+        border: 1px solid #23aa68;
+        box-shadow: 0 14px 34px rgba(46, 205, 128, 0.22);
+      }
+      .evd-fin-card--green:hover {
+        transform: translateY(-3px);
+        border-color: #147545;
+        box-shadow: 0 20px 45px rgba(46, 205, 128, 0.35);
+      }
+      .evd-fin-card--green .evd-fin-num {
+        color: #071018;
+      }
+      .evd-fin-card--green .evd-fin-title {
+        color: #071018;
+      }
+      .evd-fin-card--green .evd-fin-desc {
+        color: rgba(7, 16, 24, 0.85);
+      }
+      .evd-fin-card--green .evd-fin-divider {
+        background: rgba(7, 16, 24, 0.14);
+      }
+      .evd-fin-card--green .evd-fin-meta {
+        color: rgba(7, 16, 24, 0.65);
+      }
+
+      .evd-fin-num {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 1.15rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        display: block;
+        margin-bottom: 0.9rem;
+      }
+
+      .evd-fin-title {
+        margin: 0 0 0.75rem;
+        font-size: clamp(1.3rem, 1.6vw, 1.6rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.22;
+      }
+
+      .evd-fin-desc {
+        margin: 0;
+        font-size: 0.92rem;
+        line-height: 1.55;
+      }
+
+      .evd-fin-divider {
+        height: 1px;
+        margin: 1.35rem 0 1rem;
+      }
+
+      .evd-fin-footer {
+        display: flex;
+        align-items: center;
+      }
+
+      .evd-fin-meta {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.82rem;
+        letter-spacing: 0.05em;
+      }
+
+      .evd-fin-tall-top {
+        margin-bottom: 1.25rem;
+      }
+
+      .evd-fin-tall-mid {
+        margin: auto 0;
+        padding: 1.25rem 0;
+      }
+
+      .evd-fin-tall-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: auto;
+      }
+
+      .evd-fin-meta-line {
+        font-family: "Aeonik Mono", ui-monospace, monospace;
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+      }
+
+      @media screen and (max-width: 860px) {
+        .evd-proof-grid {
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+        }
+      }
+
+      /* Modern Staggered Cards (Validate More. Worry Less.) */
+      .evd-prod {
+        background: #f4f7f5;
+        color: #071018;
+        padding: clamp(4rem, 6vw, 5.5rem) clamp(1.5rem, 5vw, 4rem) !important;
+        position: relative;
+        margin-top: -60vh;
+        z-index: 5;
+      }
+
+      .evd-prod-inner {
+        max-width: 82rem;
+        margin: 0 auto;
+      }
+
+      .evd-prod-title {
+        margin: 0 0 clamp(2rem, 3.5vw, 2.75rem);
+        font-size: clamp(2rem, 2.6vw + 1rem, 3rem);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+        color: #071018;
+        text-align: left;
+      }
+
+      .evd-prod-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(2rem, 4vw, 3.5rem);
+        max-width: 84rem;
+        margin: 0 auto;
+        align-items: stretch;
+      }
+
+      .evd-prod-card {
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 22px !important;
+        padding: 0.95rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.95rem;
+        justify-content: space-between;
+        box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.06), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-prod-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.09), 0 6px 16px -3px rgba(0, 0, 0, 0.04);
+      }
+
+      .evd-prod-content {
+        padding: 0.35rem 0.35rem 0.15rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+      }
+
+      .evd-prod-content-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .evd-prod-title-wrap {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .evd-prod-card-name {
+        margin: 0;
+        font-size: 1.22rem;
+        font-weight: 600;
+        line-height: 1.22;
+        letter-spacing: -0.015em;
+        color: #071018;
+      }
+
+      .evd-prod-submeta {
+        font-size: 0.78rem;
+        color: #717d8a;
+        margin-top: 0.25rem;
+        font-weight: 400;
+        letter-spacing: 0.01em;
+      }
+
+      .evd-prod-badge-outline {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.22rem 0.65rem;
+        border: 1px solid rgba(7, 16, 24, 0.18);
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #071018;
+        white-space: nowrap;
+        background: #fafbfb;
+      }
+
+      .evd-prod-card-desc {
+        margin: 0.75rem 0 1.15rem;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: #52606d;
+      }
+
+      .evd-prod-content-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 0.65rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+      }
+
+      .evd-prod-metric {
+        display: flex;
+        align-items: baseline;
+        gap: 0.3rem;
+      }
+
+      .evd-prod-metric b {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #071018;
+        letter-spacing: -0.01em;
+      }
+
+      .evd-prod-metric span {
+        font-size: 0.78rem;
+        color: #717d8a;
+        font-weight: 400;
+      }
+
+      .evd-prod-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.38rem;
+        background: #071018;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 0.48rem 0.95rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: background-color 0.25s ease, transform 0.25s ease;
+      }
+
+      .evd-prod-action-btn:hover {
+        background: #2ecd80;
+        color: #071018 !important;
+        transform: scale(1.03);
+      }
+
+      .evd-prod-action-btn svg {
+        transition: transform 0.25s ease;
+      }
+
+      .evd-prod-action-btn:hover svg {
+        transform: translate(2px, -2px);
+      }
+
+      /* Visual Box (Trimmed & Slimmer) */
+      .evd-prod-visual {
+        position: relative;
+        border-radius: 16px !important;
+        overflow: hidden;
+        aspect-ratio: 16 / 10;
+        width: 100%;
+        max-height: 220px;
+        background: #0b1622;
+      }
+      .evd-prod-visual--bottom {
+        margin-top: auto;
+        aspect-ratio: 16 / 8;
+      }
+
+      .evd-prod-visual img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-prod-card:hover .evd-prod-visual img {
+        transform: scale(1.04);
+      }
+
+      .evd-prod-visual-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(7, 16, 24, 0.2) 0%, rgba(7, 16, 24, 0) 35%, rgba(7, 16, 24, 0) 65%, rgba(7, 16, 24, 0.35) 100%);
+        pointer-events: none;
+      }
+
+      @media screen and (max-width: 860px) {
+        .evd-prod-grid {
+          grid-template-columns: 1fr;
+          gap: 1.75rem;
+          max-width: 28rem;
+          margin: 0 auto;
+        }
+      }
+
+      .evd-feat-panels {
+        overflow: hidden;
+      }
+
+      @media screen and (max-width: 1080px) {
+        .navigation {
+          padding-top: 0.35rem;
+        }
+
+        .evd-nav {
+          display: flex;
+          justify-content: space-between;
+          gap: 0.75rem;
+          width: auto;
+          max-width: none;
+          min-height: 4rem;
+          margin-inline: 1rem;
+          padding: 0.45rem 0.5rem 0.45rem 0.75rem;
+          background: rgba(6, 17, 14, 0.94);
+          border: 1px solid rgba(46, 205, 128, 0.22);
+          border-radius: 8px;
+          box-shadow: 0 10px 30px rgba(2, 8, 7, 0.24);
+          -webkit-backdrop-filter: blur(18px);
+          backdrop-filter: blur(18px);
+        }
+
+        .evd-logo {
+          flex: 0 1 8.5rem;
+          width: 8.5rem;
+          max-width: 8.5rem;
+          min-height: 0;
+          padding: 0.35rem 0;
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+
+        .evd-burger {
+          display: flex !important;
+          flex: 0 0 2.75rem;
+          margin-left: auto;
+          width: 2.75rem;
+          height: 2.75rem;
+          border: 1px solid rgba(255, 255, 255, 0.65);
+          border-radius: 8px;
+          background: #f4f7f5 !important;
+        }
+
+        .evd-burger span {
+          background: #071018;
+        }
+
+        body.evd-open .evd-nav {
+          background: rgba(6, 17, 14, 0.98);
+          box-shadow: 0 10px 30px rgba(2, 8, 7, 0.24);
+        }
+
+        body.evd-open .evd-logo {
+          background: transparent !important;
+        }
+
+        body.evd-open .evd-burger {
+          background: #2ecd80 !important;
+          box-shadow: none;
+        }
+
+        .evd-menu {
+          inset: 0;
+          z-index: 950;
+          padding: 7rem 1.25rem 2rem;
+          border-radius: 0;
+        }
+
+        .evd-menu-links {
+          width: min(100%, 24rem);
+          gap: 0.6rem;
+        }
+
+        .evd-menu-links a {
+          padding: 0.55rem;
+          font-size: 1.75rem;
+        }
+
+        .evd-menu-mail {
+          bottom: 1.5rem;
+        }
+
+        .home-hero_content h1.h1-xl {
+          font-size: 3.2rem !important;
+        }
+
+        .evd-light-h,
+        .evd-proof-h,
+        .evd-prod-title,
+        .evd-feat-bigtitle,
+        .evd-trust-title {
+          font-size: 2.35rem !important;
+        }
+
+        .evd-step {
+          font-size: 2.25rem !important;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-nav {
+          width: auto;
+          margin-inline: 0.5rem;
+        }
+
+        .evd-logo {
+          flex-basis: 8.15rem;
+          width: 8.15rem;
+          max-width: 8.15rem;
+        }
+
+        .home-hero_content h1.h1-xl {
+          font-size: 2.45rem !important;
+        }
+
+        .evd-light-h,
+        .evd-proof-h,
+        .evd-prod-title,
+        .evd-feat-bigtitle,
+        .evd-trust-title {
+          font-size: 2rem !important;
+        }
+
+        .evd-feat-title {
+          font-size: 1.7rem !important;
+        }
+
+        .evd-step {
+          font-size: 1.85rem !important;
+        }
+
+        .evd-prod,
+        .evd-feat {
+          padding: 3.5rem 1rem !important;
+        }
+
+        .evd-proof,
+        .evd-trust {
+          padding-top: 3.5rem !important;
+          padding-bottom: 3.5rem !important;
+        }
+
+        .evd-prod-grid,
+        .evd-cards,
+        .evd-trust-items {
+          gap: 1rem !important;
+        }
+
+        .evd-card-inner,
+        .evd-trust-item {
+          min-height: 0 !important;
+        }
+
+        .evd-acc {
+          margin-top: 0 !important;
+          padding: 3.5rem 1rem !important;
+        }
+
+        .evd-acc .container,
+        .evd-acc .gap_9-25-3 {
+          width: 100%;
+          max-width: 100%;
+        }
+
+        .evd-acc .accordion_layout,
+        .evd-acc .accordion_sticky {
+          position: relative !important;
+          inset: auto !important;
+          width: 100%;
+          height: auto !important;
+          min-height: 0 !important;
+          padding: 0 !important;
+        }
+
+        .evd-acc .accordion_section-wrapper,
+        .evd-steps-line,
+        .evd-step-counter {
+          display: none !important;
+        }
+
+        .evd-steps,
+        .evd-steps-body,
+        .evd-step-texts {
+          width: 100%;
+          height: auto !important;
+        }
+
+        .evd-step-texts {
+          display: grid;
+          gap: 0.75rem;
+          overflow: visible;
+          counter-reset: evd-home-steps;
+        }
+
+        .evd-step {
+          position: relative !important;
+          grid-area: auto !important;
+          display: grid !important;
+          grid-template-columns: 2.25rem minmax(0, 1fr);
+          gap: 0.8rem;
+          align-items: start;
+          margin: 0;
+          padding: 1rem;
+          border: 1px solid rgba(46, 205, 128, 0.2);
+          border-radius: 8px;
+          background: rgba(9, 28, 23, 0.78);
+          color: #e9f2ed;
+          font-size: 1.05rem !important;
+          line-height: 1.5 !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: none !important;
+          counter-increment: evd-home-steps;
+        }
+
+        .evd-step::before {
+          content: "0" counter(evd-home-steps);
+          display: grid;
+          place-items: center;
+          width: 2.25rem;
+          height: 2.25rem;
+          border: 1px solid rgba(46, 205, 128, 0.36);
+          border-radius: 6px;
+          background: rgba(46, 205, 128, 0.1);
+          color: #2ecd80;
+          font-size: 0.72rem;
+          font-weight: 800;
+          line-height: 1;
+        }
+
+        .evd-step .evd-word {
+          opacity: 1 !important;
+        }
+
+        .evd-light {
+          margin-top: 0 !important;
+        }
+      }
+
+      @media screen and (max-width: 420px) {
+        .evd-nav {
+          position: relative;
+          min-height: 3.6rem;
+          padding: 0.35rem 3.55rem 0.35rem 0.65rem;
+          overflow: visible;
+        }
+
+        .evd-logo {
+          display: inline-flex !important;
+          flex-basis: 7.6rem;
+          width: 7.6rem;
+          max-width: 7.6rem;
+          min-width: 0;
+        }
+
+        .evd-burger {
+          position: absolute !important;
+          top: 50%;
+          right: 0.4rem;
+          z-index: 2;
+          display: flex !important;
+          flex: none !important;
+          width: 2.55rem !important;
+          min-width: 2.55rem !important;
+          max-width: 2.55rem !important;
+          height: 2.55rem !important;
+          margin: 0 !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: translateY(-50%);
+        }
+
+        .evd-menu-links a {
+          font-size: 1.45rem;
+        }
+
+        .home-hero_content h1.h1-xl {
+          width: calc(100vw - 2rem);
+          max-width: 12ch;
+          font-size: 1.95rem !important;
+          overflow-wrap: anywhere;
+        }
+      }
+
+      /* Keep the shared public header inside the viewport on every narrow screen. */
+      @media screen and (max-width: 1080px) {
+
+        html,
+        body {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        .navigation {
+          box-sizing: border-box;
+          width: 100vw;
+          max-width: 100vw;
+          padding-inline: 0 !important;
+          overflow: hidden;
+        }
+
+        .evd-nav {
+          display: flex !important;
+          box-sizing: border-box !important;
+          width: calc(100vw - 2rem) !important;
+          max-width: calc(100vw - 2rem) !important;
+          min-width: 0 !important;
+          margin-inline: auto !important;
+        }
+
+        .evd-pill {
+          display: none !important;
+        }
+
+        .evd-logo {
+          flex: 0 1 auto !important;
+          width: auto !important;
+          max-width: calc(100% - 3.5rem) !important;
+          min-width: 0 !important;
+        }
+
+        .evd-logo-image {
+          width: min(8.5rem, 100%) !important;
+          max-width: 100% !important;
+          height: auto;
+        }
+
+        .evd-burger {
+          position: relative !important;
+          inset: auto !important;
+          z-index: 2;
+          display: flex !important;
+          flex: 0 0 2.75rem !important;
+          width: 2.75rem !important;
+          min-width: 2.75rem !important;
+          max-width: 2.75rem !important;
+          height: 2.75rem !important;
+          margin: 0 0 0 auto !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          transform: none !important;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-nav {
+          width: calc(100vw - 1rem) !important;
+          max-width: calc(100vw - 1rem) !important;
+        }
+      }
+
+      /* Validate more. Worry less. Section - Animations & Hover Effects matching Solutions page */
+      .evd-prod {
+        padding: clamp(4rem, 6vw, 6.5rem) clamp(1.25rem, 5vw, 4rem);
+        background: #f7f9f8;
+        color: #071018;
+        position: relative;
+      }
+
+      .evd-prod-inner {
+        width: min(84rem, 100%);
+        margin: 0 auto;
+      }
+
+      .evd-prod-title {
+        font-family: "Roobert", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: clamp(2rem, 3vw, 2.75rem);
+        font-weight: 600;
+        color: #071018;
+        letter-spacing: -0.02em;
+        margin: 0 0 clamp(2rem, 3.5vw, 3rem);
+        text-align: left;
+      }
+
+      .evd-prod-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(2rem, 4vw, 3.5rem);
+      }
+
+      .evd-prod-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        position: relative;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-prod-visual {
+        position: relative;
+        width: 100%;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #071018;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(7, 20, 31, 0.08);
+        border: 1px solid rgba(7, 20, 31, 0.08);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      }
+
+      .evd-prod-visual img {
+        width: 100%;
+        height: 210px;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-visual-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 50% 100%, rgba(46, 205, 128, 0.15), transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+
+      .evd-prod-card:hover .evd-prod-visual {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px -10px rgba(7, 20, 31, 0.18), 0 0 25px -5px rgba(46, 205, 128, 0.25);
+        border-color: rgba(46, 205, 128, 0.45);
+      }
+
+      .evd-prod-card:hover .evd-prod-visual img {
+        transform: scale(1.025);
+      }
+
+      .evd-prod-card:hover .evd-visual-overlay {
+        opacity: 1;
+      }
+
+      .evd-prod-card h3 {
+        font-family: "Roobert", "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: clamp(1.35rem, 1.8vw, 1.65rem);
+        font-weight: 600;
+        color: #071018;
+        margin: 0 0 0.75rem;
+        letter-spacing: -0.015em;
+        transition: color 0.25s ease;
+      }
+
+      .evd-prod-card:hover h3 {
+        color: #087547;
+      }
+
+      .evd-prod-card p {
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #4f5a55;
+        margin: 0 0 1.5rem;
+        flex-grow: 1;
+      }
+
+      .evd-prod-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.8rem 1.65rem;
+        border-radius: 999px;
+        background: #07141f;
+        color: #ffffff;
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(7, 20, 31, 0.12);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-prod-btn svg {
+        transition: transform 0.25s ease;
+      }
+
+      .evd-prod-btn:hover {
+        background: #087547;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(8, 117, 71, 0.35);
+      }
+
+      .evd-prod-btn:hover svg {
+        transform: translateX(4px);
+      }
+
+      /* Scroll In-View Fade Up Animation */
+      .evd-anim-header,
+      .evd-anim-card-1,
+      .evd-anim-card-2 {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .evd-prod.is-in-view .evd-anim-header {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.05s;
+      }
+
+      .evd-prod.is-in-view .evd-anim-card-1 {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.18s;
+      }
+
+      .evd-prod.is-in-view .evd-anim-card-2 {
+        opacity: 1;
+        transform: translateY(0);
+        transition-delay: 0.32s;
+      }
+
+      @media screen and (max-width: 768px) {
+        .evd-prod-grid {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+      }
+
+      /* =========================================================
+           PROBLEMS SECTION (Smooth Sticky Scroll Progression)
+           ========================================================= */
+      .evd-problems-section {
+        position: relative;
+        height: 290vh;
+        /* Natural scroll progression track */
+        background: #f4f7f5;
+        color: #071018;
+        margin-bottom: 0;
+      }
+
+      .evd-feat {
+        background: #ffffff;
+        color: #071018;
+      }
+
+      .evd-problems-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 2rem clamp(1.25rem, 4vw, 3rem);
+        box-sizing: border-box;
+      }
+
+      /* Decorative background ribbon */
+      .evd-problems-bg-ribbon {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.85;
+      }
+
+      .evd-problems-bg-ribbon svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .evd-problems-inner {
+        position: relative;
+        z-index: 2;
+        width: min(84rem, 100%);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        max-height: 100%;
+      }
+
+      .evd-problems-head {
+        text-align: center;
+        max-width: 46rem;
+        margin-bottom: 2.25rem;
+        position: relative;
+        z-index: 25;
+      }
+
+      .evd-problems-kicker {
+        display: inline-block;
+        font-family: "Aeonik Mono", "Geist", monospace;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #d64010;
+        background: rgba(224, 75, 22, 0.08);
+        border: 1px solid rgba(224, 75, 22, 0.22);
+        padding: 0.35rem 0.95rem;
+        border-radius: 999px;
+        margin-bottom: 0.75rem;
+      }
+
+      .evd-problems-title {
+        font-family: "Roobert", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        color: #071018;
+        margin: 0 0 0.75rem;
+        line-height: 1.1;
+      }
+
+      .evd-problems-sub {
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+        line-height: 1.55;
+        color: #55625d;
+        margin: 0;
+      }
+
+      /* Deck wrap & Stage */
+      .evd-problems-deck-wrap {
+        position: relative;
+        width: 100%;
+        max-width: 58rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 4rem;
+        z-index: 10;
+      }
+
+      .evd-problems-deck {
+        position: relative;
+        width: 100%;
+        height: 350px;
+        margin-bottom: 1.25rem;
+      }
+
+      /* Problem Card (Full-width, Solid Theme Colors) */
+      .evd-prob-card {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 54rem;
+        min-height: 265px;
+        border-radius: 28px;
+        background-color: var(--card-bg);
+        color: var(--card-color);
+        opacity: 1;
+        border: var(--card-border, 1px solid rgba(255, 255, 255, 0.15));
+        box-shadow: 0 24px 60px -15px rgba(10, 20, 30, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        padding: clamp(2rem, 3.2vw, 2.75rem) clamp(2rem, 3.8vw, 3.25rem);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        cursor: pointer;
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        transform: translate3d(0, 0, 0);
+        will-change: transform, opacity;
+        transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1),
+          opacity 0.35s ease,
+          box-shadow 0.35s ease;
+        user-select: none;
+      }
+
+      .evd-prob-card:hover {
+        box-shadow: 0 32px 75px -15px rgba(10, 20, 30, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+      }
+
+      .evd-prob-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.15rem;
+      }
+
+      .evd-prob-card-name {
+        font-family: "Roobert", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(1.2rem, 1.7vw, 1.55rem);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        margin: 0;
+        color: var(--card-color);
+        line-height: 1.2;
+      }
+
+      .evd-prob-card-num {
+        font-family: "Aeonik Mono", "Geist", monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        opacity: 0.65;
+        color: var(--card-color);
+      }
+
+      .evd-prob-card-desc {
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(1.02rem, 1.25vw, 1.15rem);
+        line-height: 1.65;
+        color: var(--card-color);
+        opacity: 0.92;
+        margin: 0 0 1.5rem;
+      }
+
+      .evd-prob-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 0.95rem;
+        margin-top: auto;
+      }
+
+      .evd-prob-card-tag {
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--card-tag, inherit);
+        background: var(--card-tag-bg, transparent);
+        padding: 0.32rem 0.9rem;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      /* Controls (Dots Indicator) */
+      .evd-problems-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 0.85rem;
+      }
+
+      .evd-prob-dots {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .evd-prob-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: rgba(7, 20, 31, 0.22);
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .evd-prob-dot.is-active {
+        width: 26px;
+        border-radius: 999px;
+        background: #07141f;
+      }
+
+      @media screen and (max-width: 860px) {
+        .evd-problems-section {
+          height: 250vh;
+        }
+
+        .evd-problems-deck {
+          height: 410px;
+        }
+
+        .evd-prob-card {
+          max-width: 96%;
+          padding: 1.6rem;
+        }
+      }
+
+      /* =========================================================
+           CERTIFICATIONS ORBITAL SECTION (Compact & Continuously Orbiting)
+           ========================================================= */
+      .evd-certs-section {
+        position: relative;
+        background: #ffffff;
+        color: #071018;
+        padding: clamp(3.5rem, 5vw, 5.5rem) clamp(1.25rem, 5vw, 3rem) clamp(4rem, 6vw, 6rem);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .evd-certs-inner {
+        position: relative;
+        width: min(84rem, 100%);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      /* Orbital Stage Container (Spacious 640px & Zero Clipping) */
+      .evd-certs-stage {
+        position: relative;
+        width: min(640px, 96vw);
+        height: min(640px, 96vw);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        overflow: visible;
+      }
+
+      /* Dynamic Scroll-Scaled Orbital Canvas */
+      .evd-certs-orbit-wrap {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(var(--orbit-scale, 0.88));
+        will-change: transform;
+        transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: visible;
+      }
+
+      /* Static Orbital Rings (Always visible with Highlighted Emerald Glow) */
+      .evd-orbit-ring {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        box-sizing: border-box;
+      }
+
+      .evd-orbit-ring--outer {
+        width: 74%;
+        height: 74%;
+        top: 13%;
+        left: 13%;
+        border: 2px solid rgba(46, 205, 128, 0.55);
+        box-shadow: 0 0 28px rgba(46, 205, 128, 0.2), inset 0 0 20px rgba(46, 205, 128, 0.08);
+      }
+
+      .evd-orbit-ring--mid {
+        width: 38%;
+        height: 38%;
+        top: 31%;
+        left: 31%;
+        border: 2px solid rgba(46, 205, 128, 0.65);
+        box-shadow: 0 0 22px rgba(46, 205, 128, 0.22), inset 0 0 14px rgba(46, 205, 128, 0.1);
+      }
+
+      .evd-orbit-ring--inner {
+        width: 18%;
+        height: 18%;
+        top: 41%;
+        left: 41%;
+        border: 1.5px solid rgba(46, 205, 128, 0.5);
+        box-shadow: 0 0 18px rgba(46, 205, 128, 0.18), inset 0 0 10px rgba(46, 205, 128, 0.06);
+      }
+
+      /* Rotating Nodes Mask Layer: Vanishes behind 'Certified Enterprise Standards' text */
+      .evd-orbit-nodes-mask {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+        -webkit-mask-image: radial-gradient(ellipse 280px 105px at 50% 87%,
+            transparent 0%,
+            transparent 58%,
+            rgba(0, 0, 0, 0.4) 76%,
+            #000 100%);
+        mask-image: radial-gradient(ellipse 280px 105px at 50% 87%,
+            transparent 0%,
+            transparent 58%,
+            rgba(0, 0, 0, 0.4) 76%,
+            #000 100%);
+      }
+
+      /* Orbital Tracks with Faster Continuous Rotation */
+      .evd-orbit-track {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        box-sizing: border-box;
+      }
+
+      .evd-orbit-track--outer {
+        width: 100%;
+        height: 100%;
+        animation: evd-spin-orbit-outer 22s linear infinite;
+      }
+
+      .evd-orbit-track--inner {
+        width: 100%;
+        height: 100%;
+        animation: evd-spin-orbit-inner 14s linear infinite reverse;
+      }
+
+      /* Pause on Hover */
+      .evd-certs-stage:hover .evd-orbit-track {
+        animation-play-state: paused;
+      }
+
+      .evd-certs-stage:hover .evd-orbit-counter {
+        animation-play-state: paused;
+      }
+
+      @keyframes evd-spin-orbit-outer {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes evd-spin-orbit-inner {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Center Core & Soft Concentric Ripple Waves */
+      .evd-orbit-center {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .evd-orbit-ripple {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        animation: evd-ripple-pulse 4s ease-in-out infinite alternate;
+      }
+
+      .evd-orbit-ripple--3 {
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(46, 205, 128, 0.09) 0%, rgba(46, 205, 128, 0.01) 70%, transparent 100%);
+        border: 1px solid rgba(46, 205, 128, 0.15);
+      }
+
+      .evd-orbit-ripple--2 {
+        width: 76%;
+        height: 76%;
+        background: radial-gradient(circle, rgba(46, 205, 128, 0.15) 0%, rgba(46, 205, 128, 0.03) 70%, transparent 100%);
+        border: 1px solid rgba(46, 205, 128, 0.22);
+        animation-delay: 0.8s;
+      }
+
+      .evd-orbit-ripple--1 {
+        width: 54%;
+        height: 54%;
+        background: radial-gradient(circle, rgba(46, 205, 128, 0.22) 0%, rgba(46, 205, 128, 0.06) 70%, transparent 100%);
+        animation-delay: 1.6s;
+      }
+
+      @keyframes evd-ripple-pulse {
+        0% {
+          transform: scale(0.96);
+          opacity: 0.75;
+        }
+
+        100% {
+          transform: scale(1.04);
+          opacity: 1;
+        }
+      }
+
+      /* Center Logo Core (title.png) */
+      .evd-orbit-center-icon {
+        position: relative;
+        z-index: 5;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 2px solid #004700;
+        box-shadow: 0 8px 24px rgba(0, 71, 0, 0.18), 0 0 0 2px rgba(46, 205, 128, 0.25), 0 0 20px rgba(46, 205, 128, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+
+      .evd-orbit-center-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+
+      /* Orbital Nodes */
+      .evd-orbit-node {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: 0 0;
+        transform: rotate(var(--angle)) translate(var(--dist));
+        pointer-events: auto;
+      }
+
+      /* Counter-Rotation so badges stay 100% straight and upright at all times */
+      .evd-orbit-counter--outer {
+        transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg)));
+        animation: evd-counter-spin-outer 22s linear infinite;
+      }
+
+      .evd-orbit-counter--inner {
+        transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg)));
+        animation: evd-counter-spin-inner 14s linear infinite reverse;
+      }
+
+      @keyframes evd-counter-spin-outer {
+        from {
+          transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg)));
+        }
+
+        to {
+          transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg) - 360deg));
+        }
+      }
+
+      @keyframes evd-counter-spin-inner {
+        from {
+          transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg)));
+        }
+
+        to {
+          transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle, 0deg) - 360deg));
+        }
+      }
+
+      /* Decorative Planet Beads */
+      .evd-orbit-bead {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      }
+
+      .evd-orbit-bead--coral {
+        background: #ff603e;
+        box-shadow: 0 0 10px rgba(255, 96, 62, 0.65);
+      }
+
+      .evd-orbit-bead--cyan {
+        background: #14cdcf;
+        box-shadow: 0 0 10px rgba(20, 205, 207, 0.65);
+      }
+
+      .evd-orbit-bead--emerald {
+        background: #2ecd80;
+        box-shadow: 0 0 10px rgba(46, 205, 128, 0.65);
+      }
+
+      /* Certificate Card Badges (Straight, Crisp Dark Green Border) */
+      .evd-cert-badge {
+        position: relative;
+        width: 74px;
+        height: 74px;
+        border-radius: 16px;
+        background: #ffffff;
+        border: 2px solid #004700;
+        box-shadow: 0 8px 24px rgba(0, 71, 0, 0.16), 0 0 0 2px rgba(46, 205, 128, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px;
+        box-sizing: border-box;
+        transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+          box-shadow 0.35s ease,
+          border-color 0.35s ease;
+        cursor: pointer;
+        overflow: hidden;
+      }
+
+      .evd-cert-badge:hover {
+        transform: scale(1.18);
+        box-shadow: 0 16px 36px rgba(0, 71, 0, 0.28), 0 0 24px rgba(46, 205, 128, 0.6);
+        border-color: #2ecd80;
+      }
+
+      .evd-cert-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 12px;
+        transform: scale(1.05);
+        display: block;
+      }
+
+      /* Label Tag Tooltip */
+      .evd-cert-label {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(6px);
+        background: #07141f;
+        color: #ffffff;
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        box-shadow: 0 4px 14px rgba(7, 20, 31, 0.25);
+        z-index: 30;
+      }
+
+      .evd-cert-badge:hover .evd-cert-label {
+        opacity: 1;
+        transform: translateX(-50%) translateY(2px);
+      }
+
+      /* Text directly over the bottom of the biggest circle line (Matching Reference Image) */
+      .evd-certs-content {
+        position: absolute;
+        bottom: 38px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
+        width: min(380px, 86vw);
+        text-align: center;
+        pointer-events: auto;
+      }
+
+      .evd-certs-kicker {
+        display: inline-block;
+        font-family: "Aeonik Mono", "Geist", monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: #d64010;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 0.15rem 0.6rem;
+        border-radius: 999px;
+        margin-bottom: 0.25rem;
+      }
+
+      .evd-certs-title {
+        font-family: "Roobert", "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(1.2rem, 2vw, 1.45rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #071018;
+        margin: 0 0 0.25rem;
+        line-height: 1.15;
+        background: rgba(255, 255, 255, 0.92);
+        display: inline-block;
+        padding: 0 0.5rem;
+        border-radius: 4px;
+      }
+
+      .evd-certs-sub {
+        font-family: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-size: clamp(0.78rem, 1vw, 0.86rem);
+        line-height: 1.45;
+        color: #55625d;
+        margin: 0 auto;
+        max-width: 24rem;
+        background: transparent;
+        padding: 0;
+      }
+
+      @media screen and (max-width: 600px) {
+        .evd-certs-stage {
+          width: 310px;
+          height: 310px;
+        }
+
+        .evd-orbit-center {
+          width: 90px;
+          height: 90px;
+        }
+
+        .evd-orbit-center-icon {
+          width: 44px;
+          height: 44px;
+          padding: 6px;
+        }
+
+        .evd-cert-badge {
+          width: 56px;
+          height: 56px;
+          border-radius: 12px;
+          padding: 2px;
+        }
+
+        .evd-certs-content {
+          bottom: -15px;
+          width: min(300px, 90vw);
+        }
+      }
+
+      /* =========================================================
+         RANKINGS & CERTIFICATIONS BANNER SECTION (Full-Width Banner)
+         ========================================================= */
+      .evd-rankings-section {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: clamp(2.4rem, 3.6vw, 3.3rem) 0;
+        background: #000000;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      /* Full-Width Ambient Radial Glows */
+      .evd-rankings-section::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 8%;
+        transform: translateY(-50%);
+        width: 450px;
+        height: 450px;
+        background: radial-gradient(circle, rgba(220, 20, 40, 0.12) 0%, transparent 65%);
+        pointer-events: none;
+      }
+
+      .evd-rankings-section::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 6%;
+        transform: translateY(-50%);
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(46, 205, 128, 0.1) 0%, transparent 65%);
+        pointer-events: none;
+      }
+
+      /* Inner Centered Grid Container (Shifted Left & Wider for One-Line Text) */
+      .evd-rankings-card {
+        width: min(88rem, 96vw);
+        margin: 0 auto;
+        padding: 0 clamp(1rem, 2.5vw, 2.5rem);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: clamp(3rem, 5vw, 5.5rem);
+        position: relative;
+        z-index: 2;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        box-sizing: border-box;
+      }
+
+      /* Left Badge Showcase Box (Shifted Left with refined proportions) */
+      .evd-rankings-showcase {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0.9rem, 1.6vw, 1.8rem);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .evd-rank-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .evd-rank-badge:hover {
+        transform: translateY(-4px) scale(1.06);
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
+      }
+
+      .evd-rank-badge img {
+        width: clamp(85px, 8vw, 115px);
+        height: auto;
+        max-height: 120px;
+        object-fit: contain;
+        display: block;
+      }
+
+      /* Cyber Essentials in Middle - Enlarged and Prominent */
+      .evd-rank-badge--center {
+        transform: scale(1.04);
+        z-index: 3;
+      }
+
+      .evd-rank-badge--center:hover {
+        transform: translateY(-4px) scale(1.1);
+      }
+
+      .evd-rank-badge--center img {
+        width: clamp(84px, 8vw, 108px);
+        max-height: 102px;
+      }
+
+      /* Right Content Area (Aligned like Define the right operating scope section) */
+      .evd-rankings-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: clamp(1.5rem, 3vw, 3rem);
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .evd-rankings-text-block {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.45rem;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .evd-rankings-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-shrink: 0;
+      }
+
+      .evd-rankings-headline {
+        font-family: 'Roobert', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: clamp(1.85rem, 2.8vw + 0.3rem, 3.2rem);
+        font-weight: 600;
+        line-height: 1.06;
+        letter-spacing: 0;
+        color: #ffffff;
+        margin: 0;
+        text-wrap: balance;
+      }
+
+      .evd-rankings-sub {
+        font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: clamp(0.94rem, 0.3vw + 0.92rem, 1.08rem);
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.78);
+        margin: 0.35rem 0 0 0;
+        text-wrap: balance;
+        max-width: 44rem;
+      }
+
+      .evd-rankings-section .evd-hero-cta {
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: #0b1622;
+      }
+
+      .evd-rankings-section .evd-hero-cta:hover,
+      .evd-rankings-section .evd-hero-cta:focus-visible {
+        border-color: #2ecd80;
+        background: #2ecd80;
+      }
+
+      @media screen and (max-width: 1100px) {
+        .evd-rankings-card {
+          grid-template-columns: 1fr;
+          gap: 1.8rem;
+          text-align: center;
+        }
+
+        .evd-rankings-showcase {
+          justify-content: center;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        .evd-rankings-content {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          gap: 1.35rem;
+        }
+
+        .evd-rankings-text-block {
+          align-items: center;
+          max-width: 100%;
+        }
+
+        .evd-rankings-headline {
+          white-space: normal;
+          text-wrap: balance;
+          max-width: 100%;
+        }
+      }
+
+      @media screen and (max-width: 640px) {
+        .evd-rankings-section {
+          padding: 2.2rem 0;
+        }
+
+        .evd-rankings-showcase {
+          gap: 0.75rem;
+        }
+
+        .evd-rank-badge img {
+          width: 75px;
+        }
+
+        .evd-rank-badge--center img {
+          width: 100px;
+        }
+
+        .evd-rankings-actions {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .evd-rankings-section .evd-hero-cta {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+    /* =========================================================
+       LOGO MARQUEE QUEUE (Infinite Right-to-Left Loop)
+       ========================================================= */
+    .co-logo-marquee-band {
+      width: 100%;
+      background: #F3F6F4;
+      padding: clamp(1.25rem, 2.2vw, 1.85rem) 0;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    .co-logo-marquee-track {
+      display: flex;
+      width: max-content;
+      animation: coLogoScroll 28s linear infinite;
+      will-change: transform;
+    }
+
+    .co-logo-marquee-band:hover .co-logo-marquee-track {
+      animation-play-state: paused;
+    }
+
+    .co-logo-marquee-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: clamp(3rem, 6vw, 6rem);
+      padding-right: clamp(3rem, 6vw, 6rem);
+      flex-shrink: 0;
+    }
+
+    .co-logo-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      opacity: 0.82;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .co-logo-item:hover {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+
+    .co-logo-item img {
+      height: clamp(30px, 3vw, 42px);
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      display: block;
+    }
+
+    @keyframes coLogoScroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+    </style>
+    <nav class="navigation">
+      <div class="evd-nav">
+        <a href="/" class="evd-logo" aria-label="EVADA home"><img src="/logos/logo.png" alt="EVADA"
+            class="evd-logo-image" /></a>
+        <div class="evd-pill glass-panel">
+          <a href="/platform">Platform</a><a href="/solutions">Solutions</a><a href="/pricing">Pricing</a><a
+            href="/resources">Resources</a><a href="/company">Company</a><a href="/contact"
+            class="evd-nav-login">Contact us</a><a href="/signup" class="evd-cta evd-hero-cta"><span
+              class="evd-cta-label">See EVADA in action</span></a>
+        </div>
+        <button class="evd-burger" type="button" aria-label="Open menu" aria-expanded="false"
+          aria-controls="evd-mobile-menu">
+          <span></span><span></span>
+        </button>
+      </div>
+      <div data-nav="closed" class="nav_middle" style="display: none">
+        <a href="#" class="nav_link"></a>
+      </div>
+      <div class="scrim" style="display: none"></div>
+      <div class="nav_menu-line cc-top" style="display: none"></div>
+      <div class="nav_menu-line cc-bottom" style="display: none"></div>
+    </nav>
+    <div class="evd-menu" id="evd-mobile-menu" aria-hidden="true">
+      <div class="evd-menu-links">
+        <a href="/platform">Platform</a><a href="/solutions">Solutions</a><a href="/pricing">Pricing</a><a
+          href="/resources">Resources</a><a href="/company">Company</a><a href="/contact">Contact us</a><a
+          href="/signup">See EVADA in action</a>
+      </div>
+      <a class="evd-menu-mail" href="mailto:info@evada.ai">info@evada.ai</a>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const normalizePublicPath = (value) => {
+          const pathname = new URL(value, window.location.origin).pathname;
+          return pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+        };
+        const currentPublicPath = normalizePublicPath(window.location.href);
+        document
+          .querySelectorAll(".evd-pill a[href], .evd-menu-links a[href]")
+          .forEach((link) => {
+            if (normalizePublicPath(link.href) === currentPublicPath) {
+              link.setAttribute("aria-current", "page");
+            } else {
+              link.removeAttribute("aria-current");
+            }
+          });
+
+        // mobile menu toggle
+        const burger = document.querySelector(".evd-burger");
+        const menu = document.querySelector(".evd-menu");
+        if (burger && menu) {
+          const setMenuOpen = (open) => {
+            menu.classList.toggle("open", open);
+            document.body.classList.toggle("evd-open", open);
+            burger.setAttribute("aria-expanded", String(open));
+            burger.setAttribute(
+              "aria-label",
+              open ? "Close menu" : "Open menu",
+            );
+            menu.setAttribute("aria-hidden", String(!open));
+          };
+
+          burger.addEventListener("click", () => {
+            setMenuOpen(!menu.classList.contains("open"));
+          });
+
+          menu.querySelectorAll("a").forEach((link) => {
+            link.addEventListener("click", () => setMenuOpen(false));
+          });
+
+          document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") setMenuOpen(false);
+          });
+        }
+
+        // Home Stacking Rows Scroll-Fade Disappearing Effect
+        const homeStackRows = document.querySelectorAll(".home-stack-row");
+        function updateHomeStackFade() {
+          if (!homeStackRows.length) return;
+          const vh = window.innerHeight;
+          const stickyTop = homeStackRows[0] ? parseFloat(getComputedStyle(homeStackRows[0]).top) || 120 : 120;
+
+          homeStackRows.forEach((row, i) => {
+            const nextRow = homeStackRows[i + 1];
+            if (nextRow) {
+              const nextRect = nextRow.getBoundingClientRect();
+              const fadeDistance = Math.min(vh * 0.45, 360);
+              const startFade = stickyTop + fadeDistance;
+              const endFade = stickyTop + 4;
+
+              if (nextRect.top <= endFade) {
+                row.style.opacity = "0";
+                row.style.visibility = "hidden";
+                row.style.transform = "none";
+              } else if (nextRect.top < startFade) {
+                const progress = (nextRect.top - endFade) / (startFade - endFade);
+                const clamped = Math.max(0, Math.min(1, progress));
+                row.style.opacity = clamped.toFixed(3);
+                row.style.visibility = "visible";
+                row.style.transform = "none";
+              } else {
+                row.style.opacity = "1";
+                row.style.visibility = "visible";
+                row.style.transform = "none";
+              }
+            } else {
+              row.style.opacity = "1";
+              row.style.visibility = "visible";
+              row.style.transform = "none";
+            }
+          });
+        }
+
+        window.addEventListener("scroll", updateHomeStackFade, { passive: true });
+        window.addEventListener("resize", updateHomeStackFade, { passive: true });
+        updateHomeStackFade();
+
+        // logo flips dark for the whole light region under the nav: everything from where the
+        // dark hero ends (.evd-prod) down through the footer is light, so span the class across it.
+        var lightStart = document.querySelector(".evd-prod");
+        var lightEnd = document.querySelector(".evd-footer");
+        if (lightStart && lightEnd) {
+          ScrollTrigger.create({
+            trigger: lightStart,
+            start: "top 90px",
+            endTrigger: lightEnd,
+            end: "bottom 90px",
+            toggleClass: { targets: "body", className: "evd-on-light" },
+          });
+        }
+      });
+    </script>
+    <main class="page-main">
+      <div class="u-overflow-clip u-bg-black u-color-white u-p-relative u-d-flex cc-vertical cc-stretch-center">
+        <section class="home_hero section u-z-index-4" data-spy="Overview">
+          <div class="home_hero-top">
+            <div class="home_hero-camera">
+              <div class="home_hero-container container u-z-index-4">
+                <div class="row row-center-horizontal row-center-vertical">
+                  <div class="col col-lg-5 col-md-7 col-sm-9 col-xs-12">
+                    <div class="home-hero_content">
+                      <h1 class="h1-xl u-align-center u-d-flex cc-vertical">
+                        <span load-item="" class="u-d-block">The AI-Native</span><span load-item=""
+                          class="u-d-block">Cybersecurity Platform</span>
+                      </h1>
+                      <div class="u-d-flex cc-vertical cc-center-top cc-gap-24">
+                        <div load-item="">
+                          <a href="/signup" class="evd-hero-cta"><span class="evd-cta-label">See EVADA in
+                              action</span><span class="evd-cta-arrow"><svg xmlns="http://www.w3.org/2000/svg"
+                                width="18" height="18" viewBox="0 0 16 16" fill="none">
+                                <path
+                                  d="M9.13548 13.6304L8.42288 12.9773L13.0102 8.45044H1.29688V7.54957H13.0102L8.42288 3.0227L9.13548 2.36957L14.7027 8L9.13548 13.6304Z"
+                                  fill="currentColor"></path>
+                              </svg></span></a>
+                        </div>
+                        <div load-item="">
+                          <a href="/book-demo" class="evd-hero-secondary">Request a demo</a>
+                        </div>
+                        <div class="col col-no-gutters col-lg-10">
+                          <p load-item="" class="u-color-white-secondary u-align-center">
+                            A unified AI-powered cybersecurity platform with
+                            modular capabilities across pentesting, AppSec,
+                            threat monitoring, SIEM, compliance and vendor risk.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <img src="/hero-globe.svg" loading="lazy" alt="" class="home_hero-globe" />
+        </section>
+        <section id="home-how-it-works" class="home-flow-section" aria-label="Execution Lifecycle">
+          <div class="home-stack-container">
+
+            <!-- Row 1 -->
+            <div class="home-stack-row" style="--stack-idx: 0;">
+              <div class="home-stack-row-inner">
+                <div class="home-stack-left">
+                  <span class="home-stack-label">Authorized Scope</span>
+                  <span class="home-stack-num">01</span>
+                </div>
+                <div class="home-stack-right">
+                  <p class="home-stack-text">
+                    Start with authorized scope. EVADA verifies Asset ownership before a target can enter the scanner
+                    queue.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="home-stack-row" style="--stack-idx: 1;">
+              <div class="home-stack-row-inner">
+                <div class="home-stack-left">
+                  <span class="home-stack-label">Controlled Execution</span>
+                  <span class="home-stack-num">02</span>
+                </div>
+                <div class="home-stack-right">
+                  <p class="home-stack-text">
+                    AI proposes, you approve. Nothing touches your environment until you say yes. Every check is
+                    recorded, every action accountable to you.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="home-stack-row" style="--stack-idx: 2;">
+              <div class="home-stack-row-inner">
+                <div class="home-stack-left">
+                  <span class="home-stack-label">Evidence &amp; Reports</span>
+                  <span class="home-stack-num">03</span>
+                </div>
+                <div class="home-stack-right">
+                  <p class="home-stack-text">
+                    Turn scanner evidence into normalized Findings and immutable PDF or JSON reports for review and
+                    audit workflows.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+        <div class="home_hero-bg">
+          <div class="home_hero-camera">
+            <div hero-orb="">
+              <img loading="lazy" src="/hero-orb-green.svg" alt="" class="home_hero-image" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <section class="evd-prod" data-spy="Product" id="home-prod-section">
+        <div class="evd-prod-inner">
+          <h2 class="evd-prod-title evd-anim-header">Validate more. Worry less.</h2>
+          <div class="evd-prod-grid">
+
+            <!-- Card 1 (Left): Content on Top, Visual on Bottom -->
+            <div class="evd-prod-card evd-anim-card-1">
+              <div class="evd-prod-visual evd-prod-visual--top">
+                <img src="/img-adhoc.webp" alt="EVADA AI Pentester dashboard" loading="lazy" />
+                <div class="evd-prod-visual-overlay"></div>
+              </div>
+              <div class="evd-prod-content">
+                <div class="evd-prod-content-header">
+                  <div class="evd-prod-title-wrap">
+                    <h3 class="evd-prod-card-name">Authorized security testing</h3>
+                    <span class="evd-prod-submeta">Verified Scope &bull; Autonomous Engine</span>
+                  </div>
+                  <span class="evd-prod-badge-outline">Top rated</span>
+                </div>
+                <p class="evd-prod-card-desc">
+                  Verify ownership, select an active Asset and run controlled Web or TLS checks in an isolated
+                  background job.
+                </p>
+                <div class="evd-prod-content-footer">
+                  <div class="evd-prod-metric">
+                    <b>100%</b> <span>/ verified</span>
+                  </div>
+                  <a href="/platform" class="evd-prod-action-btn"
+                    aria-label="Learn more about Authorized security testing">
+                    <span>Learn more</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2 (Right): Visual on Top, Content on Bottom -->
+            <div class="evd-prod-card evd-anim-card-2">
+              <div class="evd-prod-visual evd-prod-visual--top">
+                <img src="/img-compliance.webp" alt="EVADA AI pentest report" loading="lazy" />
+                <div class="evd-prod-visual-overlay"></div>
+              </div>
+              <div class="evd-prod-content">
+                <div class="evd-prod-content-header">
+                  <div class="evd-prod-title-wrap">
+                    <h3 class="evd-prod-card-name">Evidence-ready reporting</h3>
+                    <span class="evd-prod-submeta">Immutable PDF &bull; Executive Ready</span>
+                  </div>
+                  <span class="evd-prod-badge-outline">Top rated</span>
+                </div>
+                <p class="evd-prod-card-desc">
+                  Normalize scanner Findings and generate immutable PDF and JSON VAPT reports from a fixed snapshot.
+                </p>
+                <div class="evd-prod-content-footer">
+                  <div class="evd-prod-metric">
+                    <b>Instant</b> <span>/ delivery</span>
+                  </div>
+                  <a href="/platform" class="evd-prod-action-btn"
+                    aria-label="Learn more about Evidence-ready reporting">
+                    <span>Learn more</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3 (Right): Visual on Top, Content on Bottom -->
+            <div class="evd-prod-card evd-anim-card-3">
+              <div class="evd-prod-visual evd-prod-visual--top">
+                <img src="/img-unified.webp" alt="EVADA Actionable Remediation" loading="lazy" />
+                <div class="evd-prod-visual-overlay"></div>
+              </div>
+              <div class="evd-prod-content">
+                <div class="evd-prod-content-header">
+                  <div class="evd-prod-title-wrap">
+                    <h3 class="evd-prod-card-name">Actionable remediation</h3>
+                    <span class="evd-prod-submeta">Developer Friendly &bull; Clear Steps</span>
+                  </div>
+                  <span class="evd-prod-badge-outline">Top rated</span>
+                </div>
+                <p class="evd-prod-card-desc">
+                  Receive precise, prioritized remediation guidance complete with code snippets and configuration steps to fix vulnerabilities faster.
+                </p>
+                <div class="evd-prod-content-footer">
+                  <div class="evd-prod-metric">
+                    <b>Zero</b> <span>/ false positives</span>
+                  </div>
+                  <a href="/platform" class="evd-prod-action-btn"
+                    aria-label="Learn more about Actionable remediation">
+                    <span>Learn more</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 12L12 4M12 4H6M12 4V10" stroke="currentColor" stroke-width="1.8"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================================================
+             PROBLEMS SECTION (Smooth Sticky Scroll Progression)
+             ========================================================= -->
+      <section class="evd-problems-section" id="problems" data-spy="Problems">
+        <div class="evd-problems-sticky">
+          <div class="evd-problems-bg-ribbon" aria-hidden="true">
+            <svg viewBox="0 0 1440 900" fill="none" preserveAspectRatio="none">
+              <!-- Dark Deep Forest Green Wave (#004700) -->
+              <path d="M-100 200 C 300 100, 600 700, 1100 400 C 1300 280, 1500 600, 1600 500" stroke="#004700"
+                stroke-opacity="0.36" stroke-width="110" stroke-linecap="round" fill="none" />
+              <!-- Light Bright Green Wave (#8AFF8A) -->
+              <path d="M-50 480 C 350 380, 750 820, 1200 520 C 1400 390, 1550 680, 1650 600" stroke="#8AFF8A"
+                stroke-opacity="0.32" stroke-width="75" stroke-linecap="round" fill="none" />
+            </svg>
+          </div>
+
+          <div class="evd-problems-inner">
+            <div class="evd-problems-head">
+              <span class="evd-problems-kicker">Challenges &amp; Friction</span>
+              <h2 class="evd-problems-title">Problems</h2>
+              <p class="evd-problems-sub">Traditional security validation is slow, fragmented, and disconnected from
+                developer workflows. Here is what engineering and security teams face today.</p>
+            </div>
+
+            <!-- Stacked Cards Container -->
+            <div class="evd-problems-deck-wrap">
+              <div class="evd-problems-deck" id="problemsDeck">
+
+                <!-- Card 1: Solid Deep Obsidian Night (Initially Active) -->
+                <article class="evd-prob-card is-active" data-card="0"
+                  style="--card-bg: #0b1622; --card-color: #ffffff; --card-border: 1px solid rgba(46, 205, 128, 0.35); --card-tag: #2ecd80; --card-tag-bg: rgba(46, 205, 128, 0.14);">
+                  <div class="evd-prob-card-header">
+                    <h3 class="evd-prob-card-name">TOO MANY DISCONNECTED SECURITY PRODUCTS</h3>
+                    <span class="evd-prob-card-num">01 / 05</span>
+                  </div>
+                  <p class="evd-prob-card-desc">
+                    EVADA consolidates asset authorization, vulnerability scanning, AI prioritization, and reporting
+                    into a single control plane. Eliminate vendor sprawl and replace fragmented tools with one
+                    subscription.
+                  </p>
+                  <div class="evd-prob-card-footer">
+                    <span class="evd-prob-card-tag">Consolidated Control Plane &middot; Single Subscription</span>
+                  </div>
+                </article>
+
+                <!-- Card 2: Solid Signature EVADA Emerald Green -->
+                <article class="evd-prob-card" data-card="1"
+                  style="--card-bg: #2ecd80; --card-color: #071018; --card-border: 1px solid rgba(0, 0, 0, 0.12); --card-tag: #071018; --card-tag-bg: rgba(0, 0, 0, 0.12);">
+                  <div class="evd-prob-card-header">
+                    <h3 class="evd-prob-card-name">INTEGRATION &amp; OPERATIONAL OVERLOAD</h3>
+                    <span class="evd-prob-card-num">02 / 05</span>
+                  </div>
+                  <p class="evd-prob-card-desc">
+                    Built to work directly out of the box, EVADA eliminates the need for complex, fragile custom
+                    integrations. Native workflows connect asset ownership directly to normalized findings, tickets, and
+                    audit trails without extra setup friction.
+                  </p>
+                  <div class="evd-prob-card-footer">
+                    <span class="evd-prob-card-tag">Out-of-the-Box Workflows &middot; Zero Integration Friction</span>
+                  </div>
+                </article>
+
+                <!-- Card 3: Solid Deep Forest Pine -->
+                <article class="evd-prob-card" data-card="2"
+                  style="--card-bg: #112926; --card-color: #e9fbf6; --card-border: 1px solid rgba(78, 224, 155, 0.3); --card-tag: #4ee09b; --card-tag-bg: rgba(78, 224, 155, 0.14);">
+                  <div class="evd-prob-card-header">
+                    <h3 class="evd-prob-card-name">EXPENSIVE ENTERPRISE SECURITY PRICING</h3>
+                    <span class="evd-prob-card-num">03 / 05</span>
+                  </div>
+                  <p class="evd-prob-card-desc">
+                    EVADA aligns pricing strictly with your active scope—verified assets, seats, and scan capacity—so
+                    you pay only for what you actually use. Avoid forced package tiers, hidden platform fees, and
+                    artificial feature lockouts.
+                  </p>
+                  <div class="evd-prob-card-footer">
+                    <span class="evd-prob-card-tag">Scope-Aligned Pricing &middot; No Forced Package Tiers</span>
+                  </div>
+                </article>
+
+                <!-- Card 4: Solid Midnight Slate -->
+                <article class="evd-prob-card" data-card="3"
+                  style="--card-bg: #17222f; --card-color: #ffffff; --card-border: 1px solid rgba(255, 255, 255, 0.18); --card-tag: #8ee5bd; --card-tag-bg: rgba(142, 229, 189, 0.14);">
+                  <div class="evd-prob-card-header">
+                    <h3 class="evd-prob-card-name">ALERT OVERLOAD &amp; SCANNER NOISE</h3>
+                    <span class="evd-prob-card-num">04 / 05</span>
+                  </div>
+                  <p class="evd-prob-card-desc">
+                    EVADA de-duplicates scanner output and uses AI to rank findings by real exploitability and business
+                    impact. Your team focuses on fixing what actually cuts risk instead of wading through hundreds of
+                    low-impact alerts.
+                  </p>
+                  <div class="evd-prob-card-footer">
+                    <span class="evd-prob-card-tag">AI-Ranked Exploitability &middot; Noise De-duplication</span>
+                  </div>
+                </article>
+
+                <!-- Card 5: Solid Crisp Pure White -->
+                <article class="evd-prob-card" data-card="4"
+                  style="--card-bg: #ffffff; --card-color: #071018; --card-border: 1px solid rgba(7, 16, 24, 0.16); --card-tag: #147045; --card-tag-bg: rgba(20, 112, 69, 0.10);">
+                  <div class="evd-prob-card-header">
+                    <h3 class="evd-prob-card-name">UNCONTROLLED SCANS &amp; UNVERIFIED SCOPE</h3>
+                    <span class="evd-prob-card-num">05 / 05</span>
+                  </div>
+                  <p class="evd-prob-card-desc">
+                    EVADA enforces mandatory asset ownership verification before any target enters a scan queue,
+                    combined with explicit human approval before checks execute. This guarantees your
+                    environment stays secure.
+                  </p>
+                  <div class="evd-prob-card-footer">
+                    <span class="evd-prob-card-tag">Mandatory Ownership Check &middot; Human-in-the-Loop Controls</span>
+                  </div>
+                </article>
+
+              </div>
+
+              <!-- Deck Dots Indicator -->
+              <div class="evd-problems-controls">
+                <div class="evd-prob-dots">
+                  <span class="evd-prob-dot is-active" data-index="0"></span>
+                  <span class="evd-prob-dot" data-index="1"></span>
+                  <span class="evd-prob-dot" data-index="2"></span>
+                  <span class="evd-prob-dot" data-index="3"></span>
+                  <span class="evd-prob-dot" data-index="4"></span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="evd-feat" data-spy="Platform">
+        <div class="evd-feat-inner">
+          <h2 class="evd-feat-bigtitle">One workflow, from scope to evidence.</h2>
+          <div class="evd-feat-grid">
+            <div class="evd-feat-left">
+              <h3 class="evd-feat-subtitle">Built for security teams</h3>
+              <p class="evd-feat-sub">
+                Move from authorized Assets to scanner evidence, Findings and
+                reports without losing tenant context.
+              </p>
+              <div class="evd-feat-list">
+                <button class="evd-feat-item active" data-i="0" data-shot="/img-unified.webp">
+                  <span class="evd-feat-h">Verified asset inventory</span><span class="evd-feat-d">Define authorized
+                    scope and prove ownership before
+                    scanning begins.</span><span class="evd-feat-bar"><span></span></span></button><button
+                  class="evd-feat-item" data-i="1" data-shot="/img-priority.webp">
+                  <span class="evd-feat-h">Web and TLS scanning</span><span class="evd-feat-d">Run released Web App and
+                    TLS/SSL adapters in isolated
+                    background jobs.</span><span class="evd-feat-bar"><span></span></span></button><button
+                  class="evd-feat-item" data-i="2" data-shot="/img-approval.webp">
+                  <span class="evd-feat-h">Controlled execution</span><span class="evd-feat-d">Permissions, tenant
+                    limits, duplicate protection and
+                    audit events govern every run.</span><span class="evd-feat-bar"><span></span></span></button><button
+                  class="evd-feat-item" data-i="3" data-shot="/img-evidence.webp">
+                  <span class="evd-feat-h">Normalized findings</span><span class="evd-feat-d">Deduplicate scanner
+                    evidence into a consistent triage
+                    workflow.</span><span class="evd-feat-bar"><span></span></span></button><button
+                  class="evd-feat-item" data-i="4" data-shot="/img-fixtracking.webp">
+                  <span class="evd-feat-h">Immutable reports</span><span class="evd-feat-d">Generate fixed PDF and JSON
+                    snapshots without rerunning a
+                    scanner.</span><span class="evd-feat-bar"><span></span></span></button><button class="evd-feat-item"
+                  data-i="5" data-shot="/img-continuous.webp">
+                  <span class="evd-feat-h">Team access</span><span class="evd-feat-d">Assign workspace roles and keep
+                    authorization scoped to
+                    the active tenant.</span><span class="evd-feat-bar"><span></span></span>
+                </button>
+              </div>
+            </div>
+            <div class="evd-feat-visual">
+              <div class="evd-feat-panels">
+                <img class="evd-feat-shot" src="/img-unified.webp" alt="EVADA dashboard" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="evd-proof" data-spy="Why EVADA">
+        <div class="evd-proof-inner">
+          <div class="evd-proof-grid">
+            
+            <!-- Left Stack: Card 01 & Card 02 -->
+            <div class="evd-proof-left-stack">
+              
+              <!-- Card 01 (Black) -->
+              <article class="evd-fin-card evd-fin-card--black">
+                <div class="evd-fin-card-content">
+                  <span class="evd-fin-num">01.</span>
+                  <h3 class="evd-fin-title">Prioritize verified findings</h3>
+                  <p class="evd-fin-desc">
+                    EVADA normalizes scanner evidence by Asset and severity so teams can decide what needs attention first.
+                  </p>
+                </div>
+                <div class="evd-fin-divider"></div>
+                <div class="evd-fin-footer">
+                  <span class="evd-fin-meta">Normalized evidence &middot; Triage</span>
+                </div>
+              </article>
+
+              <!-- Card 02 (White) -->
+              <article class="evd-fin-card evd-fin-card--white">
+                <div class="evd-fin-card-content">
+                  <span class="evd-fin-num">02.</span>
+                  <h3 class="evd-fin-title">Control every scan</h3>
+                  <p class="evd-fin-desc">
+                    Only verified Assets enter the queue. Permissions, duplicate locks, timeouts and audit events govern each run.
+                  </p>
+                </div>
+                <div class="evd-fin-divider"></div>
+                <div class="evd-fin-footer">
+                  <span class="evd-fin-meta">Policy controls &middot; Audit trail</span>
+                </div>
+              </article>
+
+            </div>
+
+            <!-- Right Column: Card 03 (Green Tall Card) -->
+            <div class="evd-proof-col-right">
+              <article class="evd-fin-card evd-fin-card--tall evd-fin-card--green">
+                <div class="evd-fin-tall-top">
+                  <span class="evd-fin-num">03.</span>
+                  <h3 class="evd-fin-title">Issue evidence you can retain</h3>
+                </div>
+                <div class="evd-fin-tall-mid">
+                  <p class="evd-fin-desc">
+                    Create immutable report snapshots with signed PDF and JSON downloads for review and audit workflows. Lock findings to verified scan states, export executive summaries with one click, and maintain complete cryptographic compliance across every release.
+                  </p>
+                </div>
+                <div class="evd-fin-divider"></div>
+                <div class="evd-fin-footer">
+                  <span class="evd-fin-meta">Immutable snapshots &middot; Signed downloads</span>
+                </div>
+              </article>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Continuous Logo Marquee Queue in #F3F6F4 Gap Band -->
+      <div class="co-logo-marquee-band" aria-label="EVADA Brand Logos">
+        <div class="co-logo-marquee-track">
+          <div class="co-logo-marquee-group">
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+          </div>
+          <div class="co-logo-marquee-group" aria-hidden="true">
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+            <div class="co-logo-item"><img src="/logos/logo1.png" alt="EVADA Logo" loading="lazy" /></div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- =========================================================
+           RANKINGS & RECOGNITION BANNER (Above Footer)
+           ========================================================= -->
+      <section class="evd-rankings-section" aria-label="Industry Rankings & Accreditations">
+        <div class="evd-rankings-card">
+          
+          <!-- Left Badge Showcase Box with Glowing Red/Green Gradient -->
+          <div class="evd-rankings-showcase">
+            
+            <!-- Cert 1 (Left): PEERS 2022 -->
+            <div class="evd-rank-badge" title="PEERS 2022 Certified">
+              <img src="/certificates/peers (2022).jpg" alt="PEERS 2022 Certified" loading="lazy" />
+            </div>
+
+            <!-- Cert 2 (Center - Enlarged): Cyber Essentials -->
+            <div class="evd-rank-badge evd-rank-badge--center" title="Cyber Essentials Certified">
+              <img src="/certificates/cyber-essentials.png" alt="Cyber Essentials Certified" loading="lazy" />
+            </div>
+
+            <!-- Cert 3 (Right): PEERS Quality -->
+            <div class="evd-rank-badge" title="PEERS Quality Standard">
+              <img src="/certificates/peers_Quality.jpg" alt="PEERS Quality Standard" loading="lazy" />
+            </div>
+
+          </div>
+
+          <!-- Right Content Area (Layout matching "Define the right operating scope" section) -->
+          <div class="evd-rankings-content">
+            <div class="evd-rankings-text-block">
+              <h2 class="evd-rankings-headline">Built for security. Proven by standards.</h2>
+              <p class="evd-rankings-sub">Our certifications and industry recognitions demonstrate our commitment to security, compliance, and continuous improvement.</p>
+            </div>
+            <div class="evd-rankings-actions">
+              <a href="/company" class="evd-hero-cta">
+                <span class="evd-cta-label">Explore our standards</span>
+                <span class="evd-cta-arrow" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" fill="none">
+                    <path d="M9.13548 13.6304L8.42288 12.9773L13.0102 8.45044H1.29688V7.54957H13.0102L8.42288 3.0227L9.13548 2.36957L14.7027 8L9.13548 13.6304Z" fill="currentColor"></path>
+                  </svg>
+                </span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      <footer class="evd-footer"></footer>
+    </main>
+  </div>
+
+  <script>
+    // Select elements
+    const clickThis = document.querySelector('[data-click="this"]');
+    const clickThat = document.querySelector('[data-click="that"]');
+
+    // Only add listener if both elements exist
+    if (clickThis && clickThat) {
+      clickThis.addEventListener("click", () => {
+        clickThat.click();
+      });
+    }
+  </script>
+  <script>
+    if (location.search.includes("peek=")) {
+      addEventListener("load", () => {
+        setTimeout(() => {
+          const y = parseInt(
+            new URLSearchParams(location.search).get("peek"),
+          );
+          window.scrollTo(0, y);
+          document.documentElement.scrollTop = y;
+        }, 900);
+      });
+    }
+  </script>
+  <script>
+    (function () {
+      if (!window.THREE) return;
+      var T = window.THREE;
+      var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      var VERT = [
+        "varying vec3 vN;",
+        "void main(){",
+        "  vN = normalize(normalMatrix * normal);",
+        "  gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);",
+        "}",
+      ].join("\n");
+
+      var FRAG = [
+        "precision highp float;",
+        "varying vec3 vN;",
+        "uniform vec3 uColor;",
+        "uniform float uDpr;",
+        "void main(){",
+        "  vec3 n = normalize(vN); if(!gl_FrontFacing) n = -n;",
+        "  float light = clamp(dot(n, normalize(vec3(0.35,0.55,0.75)))*0.5+0.5, 0.0, 1.0);",
+        "  float spacing = 3.0 * uDpr;",
+        "  float band = fract(gl_FragCoord.y / spacing);",
+        "  float coverage = mix(0.32, 0.9, 1.0 - light);", // dark -> thicker lines
+        "  if (band > coverage) discard;",
+        "  vec3 col = uColor * (0.55 + 0.45*light);",
+        "  gl_FragColor = vec4(col, 1.0);",
+        "}",
+      ].join("\n");
+
+      function scanMat(dpr, color) {
+        return new T.ShaderMaterial({
+          uniforms: {
+            uColor: { value: new T.Color(color || 0x2ee6a8) },
+            uDpr: { value: dpr },
+          },
+          vertexShader: VERT,
+          fragmentShader: FRAG,
+          transparent: true,
+          side: T.FrontSide,
+          depthWrite: true,
+        });
+      }
+
+      function boltShape() {
+        var s = new T.Shape();
+        var p = [
+          [2, 13],
+          [-6, 2],
+          [0, 2],
+          [-4, -13],
+          [6, -2],
+          [0, -2],
+          [6, 13],
+        ];
+        s.moveTo(p[0][0], p[0][1]);
+        for (var i = 1; i < p.length; i++) s.lineTo(p[i][0], p[i][1]);
+        s.closePath();
+        return s;
+      }
+
+      function makeMesh(shape, mat) {
+        var group = new T.Group(),
+          geo;
+        if (shape === "gem") {
+          geo = new T.OctahedronGeometry(9, 0);
+          geo.scale(1, 1.5, 1);
+          group.add(new T.Mesh(geo, mat));
+        } else if (shape === "bolt") {
+          geo = new T.ExtrudeGeometry(boltShape(), {
+            depth: 7,
+            bevelEnabled: true,
+            bevelThickness: 0.8,
+            bevelSize: 0.6,
+            bevelSegments: 1,
+          });
+          geo.center();
+          geo.scale(0.82, 0.82, 0.82);
+          group.add(new T.Mesh(geo, mat));
+        } else if (shape === "shield") {
+          var sh = new T.Shape();
+          sh.moveTo(-9, 10);
+          sh.lineTo(9, 10);
+          sh.quadraticCurveTo(9, -2, 0, -12);
+          sh.quadraticCurveTo(-9, -2, -9, 10);
+          geo = new T.ExtrudeGeometry(sh, {
+            depth: 4,
+            bevelEnabled: true,
+            bevelThickness: 0.8,
+            bevelSize: 0.6,
+            bevelSegments: 1,
+          });
+          geo.center();
+          group.add(new T.Mesh(geo, mat));
+        } else if (shape === "database") {
+          var body = new T.CylinderGeometry(7.8, 7.8, 13, 44);
+          geo = body;
+          group.add(new T.Mesh(body, mat));
+          var r1 = new T.TorusGeometry(7.8, 0.5, 8, 44);
+          var m1 = new T.Mesh(r1, mat);
+          m1.rotation.x = Math.PI / 2;
+          m1.position.y = 2.2;
+          group.add(m1);
+          var r2 = m1.clone();
+          r2.position.y = -2.2;
+          group.add(r2);
+        } else {
+          // padlock, centred to frame like the other icons
+          var lock = new T.Group();
+          var body = new T.Mesh(new T.BoxGeometry(13, 9.5, 5.5), mat);
+          body.position.y = -2;
+          lock.add(body);
+          var shackle = new T.Mesh(
+            new T.TorusGeometry(3.9, 1.3, 14, 34, Math.PI),
+            mat,
+          );
+          shackle.position.y = 3.2;
+          lock.add(shackle);
+          var legG = new T.CylinderGeometry(1.3, 1.3, 3.4, 14);
+          var l1 = new T.Mesh(legG, mat);
+          l1.position.set(-3.9, 1.9, 0);
+          lock.add(l1);
+          var l2 = new T.Mesh(legG, mat);
+          l2.position.set(3.9, 1.9, 0);
+          lock.add(l2);
+          var kh = new T.Mesh(new T.CylinderGeometry(1.5, 1.5, 1.4, 18), mat);
+          kh.rotation.x = Math.PI / 2;
+          kh.position.set(0, -1, 2.8);
+          lock.add(kh);
+          var ks = new T.Mesh(new T.BoxGeometry(1.1, 3.2, 1.4), mat);
+          ks.position.set(0, -2.9, 2.8);
+          lock.add(ks);
+          lock.position.y = -0.4; // recentre for framing
+          group.add(lock);
+        }
+        return group;
+      }
+
+      document.querySelectorAll(".evd-3d").forEach(function (canvas) {
+        var scene = new T.Scene();
+        var cam = new T.PerspectiveCamera(45, 1, 1, 100);
+        cam.position.z = 36;
+        var renderer = new T.WebGLRenderer({
+          canvas: canvas,
+          alpha: true,
+          antialias: true,
+        });
+        renderer.setClearColor(0x000000, 0);
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var mat = scanMat(dpr, canvas.dataset.line);
+        // Card-coloured copy just inside the shell: scanline gaps reveal this
+        // instead of the shape's own back faces, so it never reads transparent.
+        var backingMat = new T.MeshBasicMaterial({
+          color: new T.Color(canvas.dataset.bg || "#ffffff"),
+        });
+        var mesh = new T.Group();
+        var backing = makeMesh(canvas.dataset.shape, backingMat);
+        backing.scale.setScalar(0.96);
+        mesh.add(backing);
+        mesh.add(makeMesh(canvas.dataset.shape, mat));
+        scene.add(mesh);
+
+        function resize() {
+          var r = canvas.getBoundingClientRect();
+          renderer.setPixelRatio(dpr);
+          renderer.setSize(r.width, r.height, false);
+        }
+        resize();
+        new ResizeObserver(resize).observe(canvas);
+
+        var IDLE_SPIN = 0.0025;
+        var velY = IDLE_SPIN,
+          velX = 0.0,
+          dragging = false,
+          lx = 0,
+          ly = 0;
+        canvas.addEventListener("pointerdown", function (e) {
+          dragging = true;
+          lx = e.clientX;
+          ly = e.clientY;
+          canvas.setPointerCapture(e.pointerId);
+          canvas.classList.add("grab");
+        });
+        canvas.addEventListener("pointermove", function (e) {
+          if (!dragging) return;
+          var dx = e.clientX - lx,
+            dy = e.clientY - ly;
+          lx = e.clientX;
+          ly = e.clientY;
+          mesh.rotation.y += dx * 0.01;
+          mesh.rotation.x += dy * 0.01;
+          velY = dx * 0.01;
+          velX = dy * 0.01;
+        });
+        function end() {
+          dragging = false;
+          canvas.classList.remove("grab");
+        }
+        canvas.addEventListener("pointerup", end);
+        canvas.addEventListener("pointerleave", end);
+
+        mesh.rotation.x = -0.15;
+        function loop() {
+          if (!dragging && !reduce) {
+            mesh.rotation.y += velY;
+            mesh.rotation.x += velX;
+            velX *= 0.95;
+            velY += (IDLE_SPIN - velY) * 0.02;
+          }
+          renderer.render(scene, cam);
+          requestAnimationFrame(loop);
+        }
+        loop();
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      document.querySelectorAll(".evd-feat-list").forEach(function (list) {
+        var items = [].slice.call(list.querySelectorAll(".evd-feat-item"));
+        if (!items.length) return;
+        var DUR = 4600,
+          timer = null;
+        var grid = list.closest(".evd-feat-grid");
+        var shot = grid ? grid.querySelector(".evd-feat-shot") : null;
+        if (grid) {
+          var io = new IntersectionObserver(
+            function (e) {
+              if (e[0].isIntersecting) {
+                items.forEach(function (it) {
+                  var s = it.getAttribute("data-shot");
+                  if (s) {
+                    var im = new Image();
+                    im.src = s;
+                  }
+                });
+                io.disconnect();
+              }
+            },
+            { rootMargin: "600px" },
+          );
+          io.observe(grid);
+        }
+        function activate(i) {
+          items.forEach(function (it, ix) {
+            it.classList.toggle("active", ix === i);
+            var b = it.querySelector(".evd-feat-bar > span");
+            if (b) {
+              b.style.transition = "none";
+              b.style.width = "0%";
+            }
+          });
+          if (shot) {
+            var _s = items[i].getAttribute("data-shot");
+            if (_s && shot.getAttribute("src") !== _s) {
+              shot.setAttribute("src", _s);
+            }
+          }
+          var bar = items[i].querySelector(".evd-feat-bar > span");
+          if (bar) {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                bar.style.transition = "width " + DUR + "ms linear";
+                bar.style.width = "100%";
+              });
+            });
+          }
+          clearTimeout(timer);
+          if (!reduce)
+            timer = setTimeout(function () {
+              activate((i + 1) % items.length);
+            }, DUR);
+        }
+        items.forEach(function (it, ix) {
+          it.addEventListener("click", function () {
+            activate(ix);
+          });
+        });
+        activate(0);
+      });
+    })();
+  </script>
+  <div class="evd-cur-dot" aria-hidden="true"></div>
+  <script>
+    (function () {
+      if (!matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+      var dot = document.querySelector(".evd-cur-dot");
+      if (!dot) return;
+      addEventListener(
+        "mousemove",
+        function (e) {
+          dot.style.left = e.clientX + "px";
+          dot.style.top = e.clientY + "px";
+        },
+        { passive: true },
+      );
+      addEventListener("mousedown", function () {
+        document.body.classList.add("evd-cur-down");
+      });
+      addEventListener("mouseup", function () {
+        document.body.classList.remove("evd-cur-down");
+      });
+      var sel =
+        "a, button, .evd-hero-cta, .evd-feat-item, .evd-burger, [role=button]";
+      document.querySelectorAll(sel).forEach(function (el) {
+        el.addEventListener("mouseenter", function () {
+          document.body.classList.add("evd-cur-hover");
+        });
+        el.addEventListener("mouseleave", function () {
+          document.body.classList.remove("evd-cur-hover");
+        });
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      if (window.__evdSpy) return;
+      window.__evdSpy = true;
+      function init() {
+        if (!document.querySelector(".page-main")) return;
+        var nodes = [].slice.call(document.querySelectorAll("[data-spy]"));
+        if (nodes.length < 3)
+          nodes = [].slice.call(
+            document.querySelectorAll(".evd-page > section"),
+          );
+        if (nodes.length < 3) return;
+
+        var nav = document.createElement("nav");
+        nav.className = "evd-spy";
+        nav.setAttribute("aria-label", "Page sections");
+        var items = [];
+        nodes.forEach(function (sec, i) {
+          var label = sec.getAttribute("data-spy");
+          if (!label) {
+            var h = sec.querySelector("h1,h2,h3");
+            label = h ? h.textContent.trim() : "Section " + (i + 1);
+          }
+          label = label.replace(/\s+/g, " ");
+          if (label.length > 26) label = label.slice(0, 24).trim() + "…";
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "evd-spy-item";
+          btn.title = label;
+          var lab = document.createElement("span");
+          lab.className = "evd-spy-label";
+          lab.textContent = label;
+          var dot = document.createElement("span");
+          dot.className = "evd-spy-dot";
+          btn.appendChild(lab);
+          btn.appendChild(dot);
+          btn.addEventListener("click", function () {
+            sec.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+          nav.appendChild(btn);
+          items.push({ sec: sec, btn: btn, ratio: 0 });
+        });
+        document.body.appendChild(nav);
+        requestAnimationFrame(function () {
+          nav.classList.add("is-ready");
+        });
+
+        var io = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (e) {
+              for (var k = 0; k < items.length; k++)
+                if (items[k].sec === e.target) {
+                  items[k].ratio = e.isIntersecting ? e.intersectionRatio : 0;
+                  break;
+                }
+            });
+            var best = null;
+            items.forEach(function (x) {
+              if (!best || x.ratio > best.ratio) best = x;
+            });
+            items.forEach(function (x) {
+              x.btn.classList.toggle(
+                "is-active",
+                x === best && best.ratio > 0,
+              );
+            });
+          },
+          {
+            threshold: [0.1, 0.25, 0.5, 0.75, 1],
+            rootMargin: "-8% 0px -45% 0px",
+          },
+        );
+        items.forEach(function (x) {
+          io.observe(x.sec);
+        });
+      }
+      if (document.readyState !== "loading") init();
+      else document.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+  <script>
+    (function () {
+      const prodSec = document.getElementById('home-prod-section') || document.querySelector('.evd-prod');
+      if (!prodSec) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            prodSec.classList.add('is-in-view');
+          }
+        });
+      }, { threshold: 0.15 });
+
+      observer.observe(prodSec);
+    })();
+  </script>
+  <script>
+    (function () {
+      const section = document.getElementById("problems");
+      const deck = document.getElementById("problemsDeck");
+      if (!section || !deck) return;
+      const cards = Array.from(deck.querySelectorAll(".evd-prob-card"));
+      const dots = Array.from(document.querySelectorAll(".evd-prob-dot"));
+      const numCards = cards.length;
+      let activeIndex = 0;
+
+      function updateDeck(idx) {
+        activeIndex = Math.max(0, Math.min(numCards - 1, idx));
+
+        cards.forEach((card, i) => {
+          let diff = i - activeIndex;
+
+          card.classList.toggle("is-active", diff === 0);
+
+          let translateY = 0;
+          let scale = 1;
+          let zIndex = 10;
+          let opacity = 1;
+          let pointerEvents = "auto";
+
+          if (diff === 0) {
+            // Active front card
+            translateY = 0;
+            scale = 1;
+            zIndex = 10;
+            opacity = 1;
+          } else if (diff === -1) {
+            // Card peeking from top
+            translateY = -65;
+            scale = 0.93;
+            zIndex = 9;
+            opacity = 1;
+            pointerEvents = "none";
+          } else if (diff === 1) {
+            // Card peeking from bottom
+            translateY = 65;
+            scale = 0.93;
+            zIndex = 9;
+            opacity = 1;
+            pointerEvents = "none";
+          } else {
+            // Hide all other cards
+            translateY = 0;
+            scale = 0.8;
+            zIndex = 1;
+            opacity = 0;
+            pointerEvents = "none";
+          }
+
+          card.style.transform = `translate3d(0, ${translateY}px, 0) scale(${scale})`;
+          card.style.zIndex = zIndex;
+          card.style.opacity = opacity;
+          card.style.pointerEvents = pointerEvents;
+        });
+
+        dots.forEach((dot, i) => {
+          dot.classList.toggle("is-active", i === activeIndex);
+        });
+      }
+
+      // Natural Scroll Listener with requestAnimationFrame for 120fps buttery smoothness
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const rect = section.getBoundingClientRect();
+            const totalScroll = rect.height - window.innerHeight;
+            if (totalScroll > 0) {
+              const scrolled = -rect.top;
+              const progress = Math.max(0, Math.min(1, scrolled / totalScroll));
+              const targetIdx = Math.min(numCards - 1, Math.floor(progress * numCards));
+              if (targetIdx !== activeIndex) {
+                updateDeck(targetIdx);
+              }
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+
+      // Dot & card click navigation
+      dots.forEach((dot, i) => {
+        dot.addEventListener("click", () => {
+          const rect = section.getBoundingClientRect();
+          const sectionTop = window.scrollY + rect.top;
+          const totalScroll = rect.height - window.innerHeight;
+          const targetScroll = sectionTop + (i / (numCards - 1)) * totalScroll + 2;
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        });
+      });
+
+      cards.forEach((card, i) => {
+        card.addEventListener("click", () => {
+          const rect = section.getBoundingClientRect();
+          const sectionTop = window.scrollY + rect.top;
+          const totalScroll = rect.height - window.innerHeight;
+          const targetScroll = sectionTop + (i / (numCards - 1)) * totalScroll + 2;
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        });
+      });
+
+      updateDeck(0);
+      onScroll();
+    })();
+  </script>
+  <script>
+    (function () {
+      const section = document.getElementById("certifications");
+      const canvas = document.getElementById("certsOrbitCanvas");
+      if (!section || !canvas) return;
+
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            const rect = section.getBoundingClientRect();
+            const winH = window.innerHeight;
+
+            const startY = winH * 1.05;
+            const endY = winH * 0.15;
+            const currentY = rect.top;
+
+            const rawProgress = (startY - currentY) / (startY - endY);
+            const progress = Math.max(0, Math.min(1, rawProgress));
+
+            const minScale = 0.72;
+            const maxScale = 0.98;
+            const currentScale = minScale + (maxScale - minScale) * progress;
+
+            canvas.style.setProperty("--orbit-scale", currentScale.toFixed(3));
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+</body>
+
+</html>
