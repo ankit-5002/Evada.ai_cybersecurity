@@ -156,22 +156,69 @@ export default function HeaderCommandCenter({ canCreateAsset, canStartScan, show
   };
 
   return (
-    <div ref={rootRef} className="flex min-w-0 flex-nowrap items-center gap-2">
+    <div ref={rootRef} className="flex min-w-0 flex-nowrap items-center gap-1.5 sm:gap-2">
       <div className="hidden items-center gap-2 lg:flex">
         {canCreateAsset && showCreateAsset ? <button type="button" onClick={() => router.push("/assets/new")} className="inline-flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 text-[11px] font-black text-slate-900 transition hover:-translate-y-0.5 hover:border-[#2ECE82]/40"><Plus className="h-4 w-4 text-[#16A86E]" />Add asset</button> : null}
         {canStartScan ? <button type="button" onClick={() => router.push("/scans/new-scan")} className="inline-flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 text-[11px] font-black text-slate-900 transition hover:-translate-y-0.5 hover:border-[#2ECE82]/40"><Radar className="h-4 w-4 text-[#16A86E]" />Start scan</button> : null}
       </div>
 
-      <div className="relative hidden xl:block">
-        <div className={`flex h-9 w-[210px] items-center gap-2 rounded-full border bg-slate-50 px-3 transition 2xl:w-[280px] ${searchOpen ? "border-[#2ECE82] ring-2 ring-[#2ECE82]/10" : "border-slate-200"}`}>
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => { setSearchOpen((current) => !current); setNotificationOpen(false); setOperationsOpen(false); }}
+          className="grid h-9 w-9 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-[#2ECE82]/40 hover:text-slate-950 xl:hidden"
+          aria-label="Search workspace"
+          aria-expanded={searchOpen}
+        >
+          <Search className="h-4 w-4" />
+        </button>
+
+        <div className={`hidden h-9 w-[210px] items-center gap-2 rounded-full border bg-slate-50 px-3 transition xl:flex 2xl:w-[280px] ${searchOpen ? "border-[#2ECE82] ring-2 ring-[#2ECE82]/10" : "border-slate-200"}`}>
           <Search className="h-4 w-4 shrink-0 text-slate-400" />
           <input value={query} onChange={(event) => { setQuery(event.target.value); setSearchOpen(true); }} onFocus={() => setSearchOpen(true)} placeholder="Search Assets, Scans, Findings, Reports" className="min-w-0 flex-1 bg-transparent text-[12px] font-semibold text-slate-800 outline-none placeholder:text-slate-400" />
           {query ? <button type="button" onClick={() => { setQuery(""); setSearchResults([]); }} aria-label="Clear search"><X className="h-3.5 w-3.5 text-slate-400" /></button> : null}
         </div>
-        {searchOpen && query.trim().length >= 2 ? <div className="absolute right-0 top-[calc(100%+0.65rem)] z-50 w-[420px] overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.18)]">
-          <div className="border-b border-slate-100 px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Workspace search</div>
-          {searching ? <div className="grid gap-2 p-4">{[1,2,3].map((item) => <div key={item} className="h-12 animate-pulse rounded-[8px] bg-slate-100" />)}</div> : searchResults.length ? <div className="max-h-[370px] divide-y divide-slate-100 overflow-y-auto">{searchResults.map((result) => { const Icon = kindIcons[result.kind]; return <button key={`${result.kind}-${result.id}`} type="button" onClick={() => openResult(result)} className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-slate-50"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] bg-slate-50 text-[#0891B2] ring-1 ring-slate-100"><Icon className="h-4 w-4" /></span><span className="min-w-0 flex-1"><span className="block truncate text-[12px] font-black text-slate-950">{result.title}</span><span className="mt-0.5 block truncate text-[10px] font-semibold text-slate-500">{result.subtitle}</span></span><span className="rounded-full bg-slate-50 px-2 py-1 text-[8px] font-black uppercase text-slate-500">{result.kind}</span></button>; })}</div> : <div className="p-7 text-center text-[12px] font-bold text-slate-500">No matching tenant records.</div>}
-        </div> : null}
+
+        {searchOpen ? (
+          <div className="fixed inset-x-3 top-[4.75rem] z-50 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.22)] xl:absolute xl:inset-x-auto xl:right-0 xl:top-[calc(100%+0.65rem)] xl:w-[420px]">
+            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50 px-3 py-2.5 xl:hidden">
+              <Search className="h-4 w-4 shrink-0 text-slate-400" />
+              <input
+                autoFocus
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search Assets, Scans, Findings, Reports"
+                className="min-w-0 flex-1 bg-transparent text-[13px] font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+              />
+              {query ? <button type="button" onClick={() => { setQuery(""); setSearchResults([]); }} aria-label="Clear"><X className="h-4 w-4 text-slate-400" /></button> : null}
+              <button type="button" onClick={() => setSearchOpen(false)} className="rounded px-1.5 py-1 text-[11px] font-black text-slate-500 hover:text-slate-900">Close</button>
+            </div>
+            <div className="hidden border-b border-slate-100 px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 xl:block">Workspace search</div>
+            {searching ? (
+              <div className="grid gap-2 p-4">{[1, 2, 3].map((item) => <div key={item} className="h-12 animate-pulse rounded-[8px] bg-slate-100" />)}</div>
+            ) : searchResults.length ? (
+              <div className="max-h-[min(370px,calc(100dvh-12rem))] divide-y divide-slate-100 overflow-y-auto overscroll-contain">
+                {searchResults.map((result) => {
+                  const Icon = kindIcons[result.kind];
+                  return (
+                    <button key={`${result.kind}-${result.id}`} type="button" onClick={() => openResult(result)} className="flex w-full items-center gap-3 px-4 py-3 text-left transition hover:bg-slate-50">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] bg-slate-50 text-[#0891B2] ring-1 ring-slate-100"><Icon className="h-4 w-4" /></span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[12px] font-black text-slate-950">{result.title}</span>
+                        <span className="mt-0.5 block truncate text-[10px] font-semibold text-slate-500">{result.subtitle}</span>
+                      </span>
+                      <span className="rounded-full bg-slate-50 px-2 py-1 text-[8px] font-black uppercase text-slate-500">{result.kind}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : query.trim().length >= 2 ? (
+              <div className="p-7 text-center text-[12px] font-bold text-slate-500">No matching tenant records.</div>
+            ) : (
+              <div className="p-5 text-center text-[11px] font-bold text-slate-400">Type at least 2 characters to search.</div>
+            )}
+          </div>
+        ) : null}
       </div>
 
       <div className="relative">
@@ -179,27 +226,81 @@ export default function HeaderCommandCenter({ canCreateAsset, canStartScan, show
           <OperationOrbit active={Boolean(operations.length)} count={operations.length} progress={averageProgress} />
           {operations.length ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-cyan-600 px-1 text-[9px] font-black text-white">{operations.length}</span> : null}
         </button>
-        {operationsOpen ? <div className="fixed inset-x-3 top-[5.25rem] z-50 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.20)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.65rem)] sm:w-[430px]">
-          <div className="grid grid-cols-[76px_minmax(0,1fr)] items-center gap-4 bg-[#071514] px-4 py-4 text-white">
-            <OperationOrbit active={Boolean(operations.length)} count={operations.length} progress={averageProgress} size="large" />
-            <div className="min-w-0">
-              <p className="text-[9px] font-black uppercase text-[#04D9FF]">Tenant job control</p>
-              <p className="mt-1 text-[17px] font-black">{operations.length ? "Background work is active" : "All background work is clear"}</p>
-              <p className="mt-1 text-[10px] font-semibold leading-relaxed text-white/55">{operations.length ? `${scanCount} scan job${scanCount === 1 ? "" : "s"} and ${reportCount} report job${reportCount === 1 ? "" : "s"} are running.` : "No scanner containers or report renderers are waiting."}</p>
+        {operationsOpen ? (
+          <div className="fixed inset-x-3 top-[4.75rem] z-50 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.22)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.65rem)] sm:w-[430px]">
+            <div className="grid grid-cols-[76px_minmax(0,1fr)] items-center gap-4 bg-[#071514] px-4 py-4 text-white">
+              <OperationOrbit active={Boolean(operations.length)} count={operations.length} progress={averageProgress} size="large" />
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase text-[#04D9FF]">Tenant job control</p>
+                <p className="mt-1 text-[17px] font-black">{operations.length ? "Background work is active" : "All background work is clear"}</p>
+                <p className="mt-1 text-[10px] font-semibold leading-relaxed text-white/55">{operations.length ? `${scanCount} scan job${scanCount === 1 ? "" : "s"} and ${reportCount} report job${reportCount === 1 ? "" : "s"} are running.` : "No scanner containers or report renderers are waiting."}</p>
+              </div>
             </div>
+            {operations.length ? (
+              <div className="max-h-[min(360px,calc(100dvh-14rem))] divide-y divide-slate-100 overflow-y-auto overscroll-contain">
+                {operations.map((operation) => {
+                  const Icon = operation.kind === "scan" ? Radar : FileText;
+                  return (
+                    <button key={`${operation.kind}-${operation.id}`} type="button" onClick={() => { setOperationsOpen(false); router.push(operation.href); }} className="grid w-full grid-cols-[36px_minmax(0,1fr)_auto] gap-3 px-4 py-3 text-left transition hover:bg-cyan-50/35">
+                      <span className="grid h-9 w-9 place-items-center rounded-[8px] bg-slate-50 text-cyan-700 ring-1 ring-slate-100"><Icon className="h-4 w-4" /></span>
+                      <span className="min-w-0">
+                        <span className="flex items-center justify-between gap-3"><span className="truncate text-[11px] font-black text-slate-950">{operation.title}</span><span className="text-[10px] font-black text-cyan-700">{operation.progress}%</span></span>
+                        <span className="mt-1 block truncate text-[9px] font-bold text-slate-500">{operation.subject}</span>
+                        <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-slate-100"><span className="block h-full rounded-full bg-[#2ECE82] transition-all" style={{ width: `${operation.progress}%` }} /></span>
+                        <span className="mt-1.5 block text-[8px] font-black uppercase text-slate-400">{operation.stage.replaceAll("_", " ")}</span>
+                      </span>
+                      <ArrowRight className="mt-2 h-4 w-4 text-slate-300" />
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid place-items-center gap-2 px-6 py-7 text-center">
+                <OperationOrbit active={false} size="compact" />
+                <p className="text-[12px] font-black text-slate-800">No active operations</p>
+                <p className="max-w-xs text-[10px] font-semibold leading-relaxed text-slate-500">New Web/TLS scans and VAPT report generation will appear here automatically.</p>
+              </div>
+            )}
+            <div className="border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-[9px] font-semibold leading-relaxed text-slate-500">Scanner jobs run in isolated containers. Report jobs render immutable snapshots. Navigating away does not stop either job.</div>
           </div>
-          {operations.length ? <div className="max-h-[360px] divide-y divide-slate-100 overflow-y-auto">{operations.map((operation) => { const Icon = operation.kind === "scan" ? Radar : FileText; return <button key={`${operation.kind}-${operation.id}`} type="button" onClick={() => { setOperationsOpen(false); router.push(operation.href); }} className="grid w-full grid-cols-[36px_minmax(0,1fr)_auto] gap-3 px-4 py-3 text-left transition hover:bg-cyan-50/35"><span className="grid h-9 w-9 place-items-center rounded-[8px] bg-slate-50 text-cyan-700 ring-1 ring-slate-100"><Icon className="h-4 w-4" /></span><span className="min-w-0"><span className="flex items-center justify-between gap-3"><span className="truncate text-[11px] font-black text-slate-950">{operation.title}</span><span className="text-[10px] font-black text-cyan-700">{operation.progress}%</span></span><span className="mt-1 block truncate text-[9px] font-bold text-slate-500">{operation.subject}</span><span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-slate-100"><span className="block h-full rounded-full bg-[#2ECE82] transition-all" style={{ width: `${operation.progress}%` }} /></span><span className="mt-1.5 block text-[8px] font-black uppercase text-slate-400">{operation.stage.replaceAll("_", " ")}</span></span><ArrowRight className="mt-2 h-4 w-4 text-slate-300" /></button>; })}</div> : <div className="grid place-items-center gap-2 px-6 py-7 text-center"><OperationOrbit active={false} size="compact" /><p className="text-[12px] font-black text-slate-800">No active operations</p><p className="max-w-xs text-[10px] font-semibold leading-relaxed text-slate-500">New Web/TLS scans and VAPT report generation will appear here automatically.</p></div>}
-          <div className="border-t border-slate-100 bg-slate-50 px-4 py-2.5 text-[9px] font-semibold leading-relaxed text-slate-500">Scanner jobs run in isolated containers. Report jobs render immutable snapshots. Navigating away does not stop either job.</div>
-        </div> : null}
+        ) : null}
       </div>
 
-      {showNotifications ? <div className="relative">
-        <button type="button" onClick={() => { const opening = !notificationOpen; setNotificationOpen(opening); setOperationsOpen(false); setSearchOpen(false); if (opening) void refreshNotifications(); }} className="relative grid h-9 w-9 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-cyan-200 hover:text-[#0891B2]" aria-label={`${unread} unread notifications`}>
-          <Bell className="h-4 w-4" />
-          {unread ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[9px] font-black text-white">{unread > 99 ? "99+" : unread}</span> : null}
-        </button>
-        {notificationOpen ? <div className="fixed inset-x-3 top-[5.25rem] z-50 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.18)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.65rem)] sm:w-[410px]"><div className="flex items-center justify-between border-b border-slate-100 px-4 py-3"><div><p className="text-[13px] font-black text-slate-950">Notifications</p><p className="text-[10px] font-semibold text-slate-500">{unread} unread tenant event{unread === 1 ? "" : "s"}</p></div>{unread ? <button type="button" onClick={() => void markAllRead()} className="inline-flex items-center gap-1.5 text-[10px] font-black text-[#16865C]"><CheckCheck className="h-4 w-4" />Mark all read</button> : null}</div>{notifications.length ? <div className="max-h-[min(430px,calc(100dvh-10rem))] divide-y divide-slate-100 overflow-y-auto overscroll-contain">{notifications.map((notification) => <button key={notification.notification_key} type="button" onClick={() => void openNotification(notification)} className={`flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-slate-50 ${notification.read ? "bg-white" : "bg-cyan-50/35"}`}><span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${toneDot(notification.tone)}`} /><span className="min-w-0 flex-1"><span className="block text-[11px] font-black text-slate-950">{notification.title}</span><span className="mt-0.5 block line-clamp-2 text-[10px] font-semibold leading-relaxed text-slate-500">{notification.message || notification.object_name}</span></span><span className="shrink-0 text-[9px] font-black text-slate-400">{relativeTime(notification.created_at)}</span></button>)}</div> : <div className="p-7 text-center text-[12px] font-bold text-slate-500">No tenant notifications yet.</div>}<button type="button" onClick={() => { setNotificationOpen(false); router.push("/notifications"); }} className="flex h-11 w-full items-center justify-center gap-2 border-t border-slate-100 text-[11px] font-black text-[#0891B2]">Open notification center <ArrowRight className="h-3.5 w-3.5" /></button></div> : null}
-      </div> : null}
+      {showNotifications ? (
+        <div className="relative">
+          <button type="button" onClick={() => { const opening = !notificationOpen; setNotificationOpen(opening); setOperationsOpen(false); setSearchOpen(false); if (opening) void refreshNotifications(); }} className="relative grid h-9 w-9 place-items-center rounded-full border border-slate-200 bg-white text-slate-600 transition hover:border-cyan-200 hover:text-[#0891B2]" aria-label={`${unread} unread notifications`}>
+            <Bell className="h-4 w-4" />
+            {unread ? <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-600 px-1 text-[9px] font-black text-white">{unread > 99 ? "99+" : unread}</span> : null}
+          </button>
+          {notificationOpen ? (
+            <div className="fixed inset-x-3 top-[4.75rem] z-50 overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.22)] sm:absolute sm:inset-x-auto sm:right-0 sm:top-[calc(100%+0.65rem)] sm:w-[410px]">
+              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                <div><p className="text-[13px] font-black text-slate-950">Notifications</p><p className="text-[10px] font-semibold text-slate-500">{unread} unread tenant event{unread === 1 ? "" : "s"}</p></div>
+                {unread ? <button type="button" onClick={() => void markAllRead()} className="inline-flex items-center gap-1.5 text-[10px] font-black text-[#16865C]"><CheckCheck className="h-4 w-4" />Mark all read</button> : null}
+              </div>
+              {notifications.length ? (
+                <div className="max-h-[min(430px,calc(100dvh-14rem))] divide-y divide-slate-100 overflow-y-auto overscroll-contain">
+                  {notifications.map((notification) => (
+                    <button key={notification.notification_key} type="button" onClick={() => void openNotification(notification)} className={`flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-slate-50 ${notification.read ? "bg-white" : "bg-cyan-50/35"}`}>
+                      <span className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${toneDot(notification.tone)}`} />
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[11px] font-black text-slate-950">{notification.title}</span>
+                        <span className="mt-0.5 block line-clamp-2 text-[10px] font-semibold leading-relaxed text-slate-500">{notification.message || notification.object_name}</span>
+                      </span>
+                      <span className="shrink-0 text-[9px] font-black text-slate-400">{relativeTime(notification.created_at)}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-7 text-center text-[12px] font-bold text-slate-500">No tenant notifications yet.</div>
+              )}
+              <button type="button" onClick={() => { setNotificationOpen(false); router.push("/notifications"); }} className="flex h-11 w-full items-center justify-center gap-2 border-t border-slate-100 text-[11px] font-black text-[#0891B2]">
+                Open notification center <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

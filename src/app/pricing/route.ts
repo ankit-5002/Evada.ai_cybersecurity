@@ -252,10 +252,26 @@ export async function GET() {
         <h2>From scope review to an isolated workspace.</h2>
       </div>
       <ol class="pr-process-grid">
-        <li><span>01</span><h3>Define scope</h3><p>Review Assets, team size, current security workflow and evidence needs.</p></li>
-        <li><span>02</span><h3>Configure controls</h3><p>Agree scanner capacity, permissions, retention and support requirements.</p></li>
-        <li><span>03</span><h3>Provision tenant</h3><p>Create the isolated database, storage prefix, queues and organization owner.</p></li>
-        <li><span>04</span><h3>Start validation</h3><p>Verify authorized Assets, run released scanners and work Findings through Reports.</p></li>
+        <li>
+          <div class="pr-process-top"><span>01</span><small>Discovery</small></div>
+          <h3>Define scope</h3><p>Review Assets, team size, current security workflow and evidence needs.</p>
+          <div class="pr-process-output"><i></i><span>Scope profile</span></div>
+        </li>
+        <li>
+          <div class="pr-process-top"><span>02</span><small>Policy</small></div>
+          <h3>Configure controls</h3><p>Agree scanner capacity, permissions, retention and support requirements.</p>
+          <div class="pr-process-output"><i></i><span>Control baseline</span></div>
+        </li>
+        <li>
+          <div class="pr-process-top"><span>03</span><small>Isolation</small></div>
+          <h3>Provision tenant</h3><p>Create the isolated database, storage prefix, queues and organization owner.</p>
+          <div class="pr-process-output"><i></i><span>Tenant ready</span></div>
+        </li>
+        <li>
+          <div class="pr-process-top"><span>04</span><small>Activation</small></div>
+          <h3>Start validation</h3><p>Verify authorized Assets, run released scanners and work Findings through Reports.</p>
+          <div class="pr-process-output"><i></i><span>Workspace live</span></div>
+        </li>
       </ol>
     </div>
   </section>
@@ -411,12 +427,28 @@ export async function GET() {
     .pr-table-check { width: 1.1rem; height: 1.1rem; color: #31d189; flex-shrink: 0; }
 
     .pr-process { background: #eaf3ef; }
-    .pr-process-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); margin: 0; padding: 0; border: 1px solid rgba(7,24,19,0.15); border-radius: 8px; overflow: hidden; list-style: none; }
-    .pr-process-grid li { min-width: 0; padding: clamp(1.25rem,2.5vw,2rem); background: rgba(255,255,255,0.58); }
-    .pr-process-grid li + li { border-left: 1px solid rgba(7,24,19,0.13); }
-    .pr-process-grid span { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 50%; background: #071813; color: #32d18a; font-family: 'Aeonik Mono', ui-monospace, monospace; font-size: 0.68rem; font-weight: 700; }
-    .pr-process-grid h3 { margin: 1.5rem 0 0; font-size: 1.08rem; letter-spacing: 0; }
-    .pr-process-grid p { margin: 0.55rem 0 0; color: #61706a; font-size: 0.89rem; line-height: 1.52; }
+    .pr-process-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:1rem; margin: 0; padding: 0; overflow:visible; list-style: none; counter-reset:process; }
+    .pr-process-grid li { --process-accent: #32d18a; position: relative; isolation: isolate; display:flex; min-width: 0; min-height:16.5rem; overflow: hidden; flex-direction:column; padding: 1.1rem; border:1px solid rgba(50,209,138,.55); border-radius:14px; background: rgba(255,255,255,0.7); box-shadow:0 8px 25px rgba(7,24,19,.045); transition: transform .38s cubic-bezier(.16,1,.3,1), background-color .35s ease, box-shadow .35s ease, border-color .3s ease; }
+    .pr-process-grid li::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; background: radial-gradient(circle at 18% 18%, rgba(50,209,138,.22), transparent 34%), linear-gradient(145deg, rgba(255,255,255,.96), rgba(232,255,244,.9)); transition: opacity .35s ease; }
+    .pr-process-grid li::after { content: ''; position: absolute; top: 0; left: -70%; width: 55%; height: 2px; background: linear-gradient(90deg, transparent, var(--process-accent), transparent); transition: left .55s cubic-bezier(.16,1,.3,1); }
+    .pr-process-grid li:not(:last-child) > .pr-process-top::after { content:'→'; position:absolute; top:50%; left:calc(100% + 1.32rem); z-index:5; transform:translate(-50%,-50%); color:#168c60; font-size:.9rem; }
+    .pr-process-top { position:relative; display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding-bottom:.85rem; border-bottom:1px solid rgba(7,24,19,.09); }
+    .pr-process-top > span { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: 50%; background: #071813; color: #32d18a; box-shadow: 0 0 0 0 rgba(50,209,138,0); font-family: 'Aeonik Mono', ui-monospace, monospace; font-size: 0.68rem; font-weight: 700; transition: transform .38s cubic-bezier(.16,1,.3,1), color .3s ease, background-color .3s ease, box-shadow .3s ease; }
+    .pr-process-top small { padding:.3rem .5rem; border:1px solid rgba(8,145,178,.18); border-radius:999px; color:#08748d; background:rgba(4,217,255,.055); font:700 .58rem/1 'Aeonik Mono',monospace; text-transform:uppercase; }
+    .pr-process-grid h3 { margin: 1.35rem 0 0; font-size: 1.12rem; letter-spacing: 0; transition: color .3s ease, transform .38s cubic-bezier(.16,1,.3,1); }
+    .pr-process-grid p { margin: 0.55rem 0 0; color: #61706a; font-size: 0.89rem; line-height: 1.52; transition: color .3s ease, transform .38s cubic-bezier(.16,1,.3,1); }
+    .pr-process-output { display:flex; align-items:center; gap:.5rem; margin-top:auto; padding-top:1rem; border-top:1px solid rgba(7,24,19,.08); color:#3e554b; font-size:.68rem; font-weight:700; text-transform:uppercase; }
+    .pr-process-output i { width:.45rem; height:.45rem; border-radius:50%; background:#32d18a; box-shadow:0 0 0 4px rgba(50,209,138,.1); }
+
+    @media (hover: hover) and (pointer: fine) {
+      .pr-process-grid li:hover { z-index: 2; transform: translateY(-8px); background: #fff; box-shadow: 0 22px 48px rgba(7,24,19,.15); }
+      .pr-process-grid li:hover::before { opacity: 1; }
+      .pr-process-grid li:hover::after { left: 72%; }
+      .pr-process-grid li:hover { border-color:rgba(50,209,138,.5); }
+      .pr-process-grid li:hover .pr-process-top > span { transform: translateY(-2px) scale(1.12) rotate(-6deg); background: #32d18a; color: #071813; box-shadow: 0 0 0 7px rgba(50,209,138,.12), 0 12px 25px rgba(7,24,19,.16); }
+      .pr-process-grid li:hover h3 { color: #087547; transform: translateY(-2px); }
+      .pr-process-grid li:hover p { color: #364c43; transform: translateY(-2px); }
+    }
 
     .pr-faq { padding-block: clamp(4rem,8vw,7.5rem); background: #fff; }
     .pr-faq-layout { display: grid; grid-template-columns: minmax(14rem,0.72fr) minmax(0,1.35fr); gap: clamp(2.5rem,8vw,8rem); align-items: start; }
@@ -442,8 +474,7 @@ export async function GET() {
       .pr-plan-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
       .pr-plan.is-featured { grid-column: 1 / -1; }
       .pr-process-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
-      .pr-process-grid li:nth-child(3) { border-left: none; border-top: 1px solid rgba(7,24,19,0.13); }
-      .pr-process-grid li:nth-child(4) { border-top: 1px solid rgba(7,24,19,0.13); }
+      .pr-process-grid li:not(:last-child) > .pr-process-top::after { display:none; }
     }
 
     @media screen and (max-width: 820px) {
@@ -475,7 +506,7 @@ export async function GET() {
       .pr-capabilities ul { grid-template-columns: 1fr; }
       .pr-capabilities li:nth-last-child(2) { border-bottom: 1px solid rgba(237,248,242,0.08); }
       .pr-process-grid { grid-template-columns: 1fr; }
-      .pr-process-grid li + li, .pr-process-grid li:nth-child(3), .pr-process-grid li:nth-child(4) { border-left: none; border-top: 1px solid rgba(7,24,19,0.13); }
+      .pr-process-grid li { min-height:0; }
       .pr-end-actions { display: grid; width: 100%; justify-items: start; }
       .pr-end .evd-hero-cta { width: min(100%,20rem); }
     }

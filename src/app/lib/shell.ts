@@ -105,10 +105,11 @@ export async function renderPage({
     .evd-hero-fade { position: absolute; left: 0; right: 0; bottom: -1px; height: 20rem; pointer-events: none; z-index: -1; background: linear-gradient(180deg, rgba(7,16,24,0) 0%, rgba(7,16,24,0.22) 12%, rgba(7,16,24,0.55) 23%, rgba(7,16,24,0.82) 33%, rgba(7,16,24,0.96) 40%, rgb(7,16,24) 45%, rgb(21,29,37) 52%, rgb(52,59,65) 60%, rgb(95,101,106) 68%, rgb(143,147,151) 76%, rgb(190,193,195) 83%, rgb(226,227,228) 90%, rgb(246,247,247) 96%, var(--evd-hero-blend, #ffffff) 100%); }
     .evd-hero-inner { position: relative; z-index: 1; width: 100%; max-width: 62rem; min-width: 0; margin: 0 auto; }
     @media screen and (max-width: 900px) {
-      .evd-hero { min-height: 30rem; padding: 8rem clamp(1.5rem,5vw,4rem) 5rem; }
-      .evd-hero-fade { height: 14rem; }
-      .evd-hero::before { width: 20rem; height: 20rem; opacity: 0.5; }
-      .evd-hero::after { width: 22rem; height: 22rem; opacity: 0.45; }
+      .evd-hero { min-height: 28rem; padding: 7rem clamp(1.25rem,4vw,3rem) 4.5rem; }
+      .evd-hero-fade { height: 12rem; }
+      .evd-hero::before { width: 18rem; height: 18rem; opacity: 0.45; }
+      .evd-hero::after { width: 20rem; height: 20rem; opacity: 0.4; }
+      .evd-hero h1 { font-size: 2.75rem; }
     }
     .evd-hero h1 { margin: 0 0 1.1rem; font-size: 3.9rem; line-height: 1.04; letter-spacing: 0; font-weight: 400; max-width: 20ch; }
     .evd-hero p { margin: 0; max-width: 40rem; font-size: 1.12rem; line-height: 1.6; color: rgba(233,242,237,0.6); }
@@ -118,21 +119,18 @@ export async function renderPage({
     @media screen and (max-width: 1200px) {
       .evd-hero h1 { font-size: 3.35rem; }
     }
-    @media screen and (max-width: 900px) {
-      .evd-hero h1 { font-size: 3rem; }
-    }
     @media screen and (max-width: 560px) {
-      .evd-hero { min-height: 27rem; padding: 7.25rem 1.25rem 4rem; }
-      .evd-hero h1 { font-size: 2.4rem; }
-      .evd-hero p { font-size: 1rem; }
-      .evd-hero-actions { align-items: stretch; gap: 0.9rem; }
-    }
-    /* when the two CTAs stack on narrow screens, indent the secondary link's text
-       so it lines up with the primary button's LABEL (the pill's padding insets its
-       label ~1.5rem); margin-left keeps the underline under the text only. */
-    @media screen and (max-width: 560px) {
-      .evd-hero-actions { flex-direction: column; align-items: flex-start; gap: 1.35rem; }
-      .evd-hero-actions .evd-hero-secondary { margin-left: 1.5rem; }
+      .evd-hero { min-height: 23rem; padding: 6rem 1.25rem 3.5rem; }
+      .evd-hero-fade { height: 9rem; }
+      .evd-hero h1 { font-size: 2.15rem; line-height: 1.1; }
+      .evd-hero p { font-size: 0.95rem; line-height: 1.5; }
+      .evd-page, .evd-page section, .evd-page div, .evd-page article, .evd-page aside { min-width: 0; }
+      .evd-page h1, .evd-page h2, .evd-page h3, .evd-page p { max-width: 100%; white-space: normal !important; overflow-wrap: break-word; }
+      .evd-page img, .evd-page svg, .evd-page video, .evd-page canvas { max-width: 100%; }
+      .evd-page a, .evd-page button { max-width: 100%; }
+      .evd-hero-actions { flex-direction: column; align-items: stretch; gap: 1rem; }
+      .evd-hero-actions .evd-hero-secondary { margin-left: 0; text-align: center; }
+      .evd-hero::before, .evd-hero::after { opacity: 0.25; }
     }
     .evd-hero--center .evd-hero-inner { text-align: center; }
     .evd-hero--center h1, .evd-hero--center p { margin-left: auto; margin-right: auto; }

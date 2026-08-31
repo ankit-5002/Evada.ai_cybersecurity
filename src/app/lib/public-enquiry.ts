@@ -75,7 +75,7 @@ function selectField(
   icon: keyof typeof icons,
   options: string[],
 ) {
-  return `<label class="pe-field"><span class="pe-sr-only">${label}</span><div class="pe-control"><select name="${name}"><option value="" disabled selected>${label}</option>${options.map((option) => `<option value="${option}">${option}</option>`).join("")}</select></div></label>`;
+  return `<label class="pe-field"><span class="pe-sr-only">${label}</span><div class="pe-control pe-control--select"><select name="${name}"><option value="" disabled selected>${label}</option>${options.map((option) => `<option value="${option}">${option}</option>`).join("")}</select><span class="pe-select-arrow" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="m3.5 6 4.5 4 4.5-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div></label>`;
 }
 
 function contactCard(title: string, detail: string, icon: keyof typeof icons, link?: string) {
@@ -288,6 +288,11 @@ const css = `
   .pe-control input, .pe-control select, .pe-control textarea { width: 100%; background: transparent; border: none; outline: none; padding: 1rem 1.25rem; color: #fff; font-size: 0.95rem; }
   .pe-control input::placeholder, .pe-control textarea::placeholder, .pe-control select:invalid { color: rgba(255, 255, 255, 0.4); }
   .pe-control select { appearance: none; cursor: pointer; }
+  .pe-control--select { position: relative; }
+  .pe-control--select select { padding-right: 3.25rem; }
+  .pe-select-arrow { position: absolute; top: 50%; right: 1.2rem; width: 1rem; height: 1rem; display: grid; place-items: center; color: rgba(255,255,255,.68); pointer-events: none; transform: translateY(-50%); transition: color .2s, transform .2s; }
+  .pe-select-arrow svg { width: .85rem; height: .85rem; }
+  .pe-control--select:hover .pe-select-arrow, .pe-control--select:focus-within .pe-select-arrow { color: #2ecd80; transform: translateY(-50%) translateY(1px); }
   .pe-control select option { background: #111; color: #fff; }
   .pe-control textarea { min-height: 8rem; resize: vertical; padding-top: 1rem; }
   
@@ -328,6 +333,13 @@ const css = `
   .pe-quick-new { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; }
   .pe-quick-new a { color: #fff; font-weight: 500; text-decoration: none; border-bottom: 1px solid rgba(255, 255, 255, 0.3); transition: border-color 0.2s; }
   .pe-quick-new a:hover { border-color: #fff; }
+  @media (max-width: 640px) {
+    .pe-split { width:100%; padding:5.25rem 1rem 3rem; }
+    .pe-story h1 { max-width:100%; font-size:clamp(2.15rem,11vw,2.75rem); overflow-wrap:break-word; }
+    .pe-summary { margin-bottom:2rem; }
+    .pe-context-new, .pe-contact-list { grid-template-columns:1fr; }
+    .pe-form-panel, .pe-story, .pe-story-inner { min-width:0; max-width:100%; }
+  }
 `;
 
 export function renderPublicEnquiry(kind: EnquiryKind) {

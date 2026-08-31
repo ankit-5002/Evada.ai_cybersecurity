@@ -98,11 +98,16 @@
     document.addEventListener("DOMContentLoaded", (event) => {
       gsap.registerPlugin(ScrollTrigger, CustomEase, SplitText);
 
-      const lenis = new Lenis();
-      lenis.on("scroll", ScrollTrigger.update);
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
+      const usesTouchNavigation =
+        window.matchMedia("(hover: none), (pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0;
+      const lenis = usesTouchNavigation ? null : new Lenis();
+      if (lenis) {
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000);
+        });
+      }
       gsap.ticker.lagSmoothing(0);
 
       CustomEase.create("main", "0.65, 0.01, 0.05, 0.99");
@@ -1597,6 +1602,28 @@
         touch-action: none;
         display: block;
         margin: -0.4rem 0 0 -0.6rem;
+      }
+
+      @media (hover: none), (pointer: coarse) {
+        html,
+        body {
+          overflow-y: auto !important;
+          overscroll-behavior-y: auto;
+          touch-action: pan-y pinch-zoom;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        html.lenis,
+        html.lenis body,
+        html.lenis.lenis-stopped {
+          height: auto;
+          overflow-y: auto !important;
+        }
+
+        .evd-3d,
+        canvas {
+          touch-action: pan-y pinch-zoom !important;
+        }
       }
 
       .evd-card-flat {
@@ -4092,6 +4119,89 @@
         }
       }
 
+      @media screen and (max-width: 640px) {
+        .evd-problems-section {
+          height: auto;
+          min-height: 0;
+          padding: 3.5rem 1rem;
+        }
+
+        .evd-problems-sticky {
+          position: relative;
+          top: auto;
+          height: auto;
+          min-height: 0;
+          overflow: visible;
+          padding: 0;
+        }
+
+        .evd-problems-bg-ribbon {
+          display: none;
+        }
+
+        .evd-problems-inner {
+          display: block;
+          max-height: none;
+        }
+
+        .evd-problems-head {
+          margin: 0 0 1.5rem;
+          text-align: left;
+        }
+
+        .evd-problems-title {
+          font-size: 2rem;
+        }
+
+        .evd-problems-deck-wrap {
+          display: block;
+          margin-top: 0;
+        }
+
+        .evd-problems-deck {
+          display: grid;
+          height: auto;
+          gap: 0.75rem;
+          margin: 0;
+        }
+
+        .evd-prob-card {
+          position: relative;
+          inset: auto;
+          width: 100%;
+          max-width: none;
+          min-height: 0;
+          padding: 1.25rem;
+          border-radius: 16px;
+          opacity: 1 !important;
+          pointer-events: auto !important;
+          transform: none !important;
+          will-change: auto;
+        }
+
+        .evd-prob-card-header {
+          margin-bottom: 0.75rem;
+        }
+
+        .evd-prob-card-name {
+          font-size: 1rem;
+        }
+
+        .evd-prob-card-desc {
+          margin-bottom: 1rem;
+          font-size: 0.88rem;
+          line-height: 1.5;
+        }
+
+        .evd-prob-card-tag {
+          font-size: 0.72rem;
+        }
+
+        .evd-problems-controls {
+          display: none;
+        }
+      }
+
       /* =========================================================
            CERTIFICATIONS ORBITAL SECTION (Compact & Continuously Orbiting)
            ========================================================= */
@@ -4832,6 +4942,209 @@
         transform: translateX(-50%);
       }
     }
+
+    /* Live security posture section */
+    .evd-posture {
+      padding: clamp(4.5rem, 7vw, 7rem) clamp(1.25rem, 5vw, 4rem);
+      background: radial-gradient(circle at 84% 12%, rgba(46, 205, 128, 0.15), transparent 28%), #071010;
+      color: #edf6f1;
+    }
+
+    .evd-posture-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(32rem, 1.22fr);
+      align-items: center;
+      gap: clamp(2.5rem, 6vw, 6rem);
+      width: 100%;
+      max-width: 82rem;
+      margin: 0 auto;
+    }
+
+    .evd-posture-kicker {
+      display: inline-block;
+      margin-bottom: 0.9rem;
+      color: #2ecd80;
+      font-family: "Aeonik Mono", ui-monospace, monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .evd-posture-copy h2 {
+      max-width: 13ch;
+      margin: 0;
+      color: #fff;
+      font-family: "Roobert", "Geist", sans-serif;
+      font-size: clamp(2rem, 3.5vw, 3.15rem);
+      font-weight: 600;
+      line-height: 1.06;
+      text-wrap: balance;
+    }
+
+    .evd-posture-copy > p {
+      max-width: 34rem;
+      margin: 1.15rem 0 0;
+      color: rgba(237, 246, 241, 0.62);
+      font-size: 1.02rem;
+      line-height: 1.65;
+    }
+
+    .evd-posture-signals {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    .evd-posture-signal {
+      display: grid;
+      grid-template-columns: 2.25rem minmax(0, 1fr);
+      gap: 0.8rem;
+      align-items: start;
+    }
+
+    .evd-posture-signal > span {
+      display: grid;
+      width: 2.25rem;
+      height: 2.25rem;
+      place-items: center;
+      border: 1px solid rgba(46, 205, 128, 0.25);
+      border-radius: 8px;
+      background: rgba(46, 205, 128, 0.09);
+      color: #2ecd80;
+      font-family: "Aeonik Mono", monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .evd-posture-signal strong,
+    .evd-posture-signal small {
+      display: block;
+    }
+
+    .evd-posture-signal strong { color: #fff; font-size: 0.92rem; }
+    .evd-posture-signal small { margin-top: 0.2rem; color: rgba(237, 246, 241, 0.48); font-size: 0.78rem; line-height: 1.45; }
+
+    .evd-posture-panel {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 12px;
+      background: #f7faf9;
+      color: #071018;
+      box-shadow: 0 35px 90px rgba(0, 0, 0, 0.4);
+      transform: rotate(1deg);
+    }
+
+    .evd-posture-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      background: #0b1b17;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .evd-posture-panel-head span::before {
+      content: "";
+      display: inline-block;
+      width: 0.5rem;
+      height: 0.5rem;
+      margin-right: 0.45rem;
+      border-radius: 50%;
+      background: #2ecd80;
+      box-shadow: 0 0 12px #2ecd80;
+    }
+
+    .evd-posture-panel-head b {
+      padding: 0.3rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(46, 205, 128, 0.14);
+      color: #bfffe1;
+      font-size: 0.62rem;
+      text-transform: uppercase;
+    }
+
+    .evd-posture-panel-body { padding: 1.1rem; }
+    .evd-posture-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.7rem; }
+    .evd-posture-metric { padding: 0.9rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
+    .evd-posture-metric span, .evd-posture-metric strong, .evd-posture-metric small { display: block; }
+    .evd-posture-metric span { color: #64748b; font-size: 0.63rem; font-weight: 700; text-transform: uppercase; }
+    .evd-posture-metric strong { margin-top: 0.4rem; font-size: 1.55rem; }
+    .evd-posture-metric small { margin-top: 0.25rem; color: #94a3b8; font-size: 0.62rem; }
+    .evd-posture-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 0.7rem; margin-top: 0.7rem; }
+    .evd-posture-card { padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
+    .evd-posture-card h3 { margin: 0; font: 700 0.78rem/1.2 "Roobert", sans-serif; }
+    .evd-posture-bars { display: grid; gap: 0.62rem; margin-top: 1rem; }
+    .evd-posture-bar { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr) 1rem; align-items: center; gap: 0.5rem; font-size: 0.6rem; color: #64748b; }
+    .evd-posture-bar i { display: block; height: 0.42rem; overflow: hidden; border-radius: 99px; background: #f1f5f9; }
+    .evd-posture-bar i::after { content: ""; display: block; width: var(--risk); height: 100%; border-radius: inherit; background: var(--tone); }
+    .evd-posture-jobs { display: grid; gap: 0.55rem; margin-top: 0.85rem; }
+    .evd-posture-job { padding: 0.65rem; border-radius: 7px; background: #f8fafc; }
+    .evd-posture-job span { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.61rem; font-weight: 700; }
+    .evd-posture-job i { display: block; height: 0.3rem; margin-top: 0.5rem; overflow: hidden; border-radius: 99px; background: #e2e8f0; }
+    .evd-posture-job i::after { content: ""; display: block; width: var(--progress); height: 100%; background: #2ecd80; }
+
+    @media screen and (max-width: 960px) {
+      .evd-posture-inner { grid-template-columns: 1fr; }
+      .evd-posture-copy h2 { max-width: 18ch; }
+      .evd-posture-panel { transform: none; }
+    }
+
+    @media screen and (max-width: 580px) {
+      .evd-posture { padding-block: 3.75rem; }
+      .evd-posture-metrics, .evd-posture-grid { grid-template-columns: 1fr; }
+      .evd-posture-metric { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.25rem 1rem; }
+      .evd-posture-metric strong { grid-row: 1 / 3; grid-column: 2; margin: 0; }
+    }
+
+    /* Signal constellation: image-free risk intelligence visual */
+    .evd-signal-stage { position: relative; min-height: 32rem; isolation: isolate; }
+    .evd-signal-stage::before { content: ""; position: absolute; inset: 8% 7%; z-index: -2; border-radius: 50%; background: radial-gradient(circle, rgba(46,205,128,.12), rgba(4,217,255,.04) 42%, transparent 70%); filter: blur(12px); animation: evdSignalAura 6s ease-in-out infinite; }
+    .evd-signal-grid { position: absolute; inset: 0; z-index: -3; opacity: .2; background-image: linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px); background-size: 42px 42px; mask-image: radial-gradient(circle,#000 30%,transparent 76%); }
+    .evd-signal-lines { position: absolute; inset: 5%; width: 90%; height: 90%; overflow: visible; pointer-events: none; }
+    .evd-signal-line { fill: none; stroke: rgba(46,205,128,.28); stroke-width: 1.25; stroke-dasharray: 5 9; animation: evdSignalFlow 7s linear infinite; }
+    .evd-signal-line.cyan { stroke: rgba(4,217,255,.3); animation-direction: reverse; animation-duration: 9s; }
+    .evd-signal-node { position: absolute; z-index: 2; width: min(13.5rem,40%); padding: .85rem; border: 1px solid rgba(255,255,255,.13); border-radius: 11px; background: rgba(12,31,26,.88); box-shadow: 0 18px 50px rgba(0,0,0,.25); backdrop-filter: blur(14px); animation: evdSignalFloat 6s ease-in-out infinite; }
+    .evd-signal-node--asset { top: 1%; left: 0; }
+    .evd-signal-node--threat { top: 8%; right: 0; animation-delay: -2s; }
+    .evd-signal-node--control { right: 1%; bottom: 2%; animation-delay: -4s; }
+    .evd-signal-node--evidence { left: 2%; bottom: 0; animation-delay: -1s; }
+    .evd-signal-node-head { display: flex; align-items: center; justify-content: space-between; gap: .7rem; }
+    .evd-signal-node-head span { display: flex; align-items: center; gap: .5rem; color: #fff; font-size: .73rem; font-weight: 700; }
+    .evd-signal-node-head i { width: .48rem; height: .48rem; border-radius: 50%; background: var(--signal,#2ecd80); box-shadow: 0 0 12px var(--signal,#2ecd80); }
+    .evd-signal-node-head b { color: rgba(237,246,241,.42); font: 600 .57rem/1 "Aeonik Mono",monospace; text-transform: uppercase; }
+    .evd-signal-node strong { display: block; margin-top: .7rem; color: #fff; font: 600 .95rem/1.2 "Roobert",sans-serif; }
+    .evd-signal-node p { margin: .35rem 0 0; color: rgba(237,246,241,.5); font-size: .65rem; line-height: 1.42; }
+    .evd-signal-tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .65rem; }
+    .evd-signal-tags span { padding: .28rem .48rem; border: 1px solid rgba(46,205,128,.18); border-radius: 999px; color: #bfffe1; background: rgba(46,205,128,.07); font: 600 .55rem/1 "Aeonik Mono",monospace; }
+    .evd-signal-core { position: absolute; top: 50%; left: 50%; z-index: 3; display: grid; width: 11.75rem; height: 11.75rem; place-items: center; transform: translate(-50%,-50%); border: 1px solid rgba(46,205,128,.42); border-radius: 50%; background: radial-gradient(circle at 38% 30%,#173c30,#071510 64%); box-shadow: 0 0 0 1rem rgba(46,205,128,.035),0 0 0 2rem rgba(4,217,255,.025),0 28px 80px rgba(0,0,0,.5); text-align: center; }
+    .evd-signal-core::before,.evd-signal-core::after { content:""; position:absolute; border-radius:50%; border:1px dashed rgba(46,205,128,.24); animation:evdSignalSpin 18s linear infinite; }
+    .evd-signal-core::before { inset:-1rem; }.evd-signal-core::after { inset:-2rem; border-color:rgba(4,217,255,.16); animation-direction:reverse; animation-duration:26s; }
+    .evd-signal-core-content { position: relative; z-index: 1; padding: 1.2rem; }
+    .evd-signal-core small { display:block; color:#04d9ff; font:700 .58rem/1 "Aeonik Mono",monospace; text-transform:uppercase; }
+    .evd-signal-core strong { display:block; margin-top:.55rem; color:#fff; font:600 1.08rem/1.12 "Roobert",sans-serif; }
+    .evd-signal-score { display:inline-flex; align-items:baseline; gap:.25rem; margin-top:.65rem; color:#2ecd80; }.evd-signal-score b { font-size:1.75rem; line-height:1; }.evd-signal-score span { font-size:.56rem; font-weight:700; text-transform:uppercase; }
+    .evd-signal-event { position:absolute; left:50%; bottom:4%; z-index:4; display:flex; align-items:center; gap:.6rem; padding:.65rem .8rem; transform:translateX(-50%); border:1px solid rgba(46,205,128,.25); border-radius:999px; background:#0b1b17; box-shadow:0 12px 30px rgba(0,0,0,.3); color:#bfffe1; font-size:.62rem; font-weight:700; white-space:nowrap; }
+    .evd-signal-event i { width:.45rem; height:.45rem; border-radius:50%; background:#2ecd80; animation:evdSignalPulse 1.5s ease-in-out infinite; }
+    @keyframes evdSignalFlow { to { stroke-dashoffset:-140; } }
+    @keyframes evdSignalSpin { to { transform:rotate(360deg); } }
+    @keyframes evdSignalFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
+    @keyframes evdSignalAura { 0%,100% { opacity:.65; transform:scale(.96); } 50% { opacity:1; transform:scale(1.04); } }
+    @keyframes evdSignalPulse { 0%,100% { opacity:.45; box-shadow:0 0 0 0 rgba(46,205,128,.35); } 50% { opacity:1; box-shadow:0 0 0 7px rgba(46,205,128,0); } }
+
+    @media screen and (max-width: 720px) {
+      .evd-signal-stage { display:grid; min-height:0; grid-template-columns:1fr; gap:.7rem; }
+      .evd-signal-grid,.evd-signal-lines,.evd-signal-event { display:none; }
+      .evd-signal-core { position:relative; top:auto; left:auto; order:-1; width:11rem; height:11rem; margin:1rem auto 2rem; transform:none; }
+      .evd-signal-node { position:relative; inset:auto; width:100%; animation:none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .evd-signal-stage::before,.evd-signal-line,.evd-signal-node,.evd-signal-core::before,.evd-signal-core::after,.evd-signal-event i { animation:none !important; }
+    }
     </style>
     <nav class="navigation">
       <div class="evd-nav">
@@ -5350,6 +5663,31 @@
                 <img class="evd-feat-shot" src="/img-unified.webp" alt="EVADA dashboard" loading="lazy" />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="evd-posture" data-spy="Risk intelligence" aria-label="Context-aware risk intelligence">
+        <div class="evd-posture-inner">
+          <div class="evd-posture-copy">
+            <span class="evd-posture-kicker">CONTEXT-AWARE RISK INTELLIGENCE</span>
+            <h2>A severity score is only the beginning</h2>
+            <p>EVADA combines verified asset context, scanner evidence, exploitation signals and control effectiveness to help teams decide what deserves action now—and prove whether the response worked.</p>
+            <div class="evd-posture-signals">
+              <div class="evd-posture-signal"><span>01</span><div><strong>See the environment</strong><small>Keep authorised assets, exposure and changing security state visible.</small></div></div>
+              <div class="evd-posture-signal"><span>02</span><div><strong>Prioritise with context</strong><small>Balance technical severity with known exploitation, asset importance and evidence confidence.</small></div></div>
+              <div class="evd-posture-signal"><span>03</span><div><strong>Close the assurance loop</strong><small>Retest remediation and preserve the result as traceable report evidence.</small></div></div>
+            </div>
+          </div>
+          <div class="evd-signal-stage" aria-label="Animated EVADA risk signal network">
+            <div class="evd-signal-grid" aria-hidden="true"></div>
+            <svg class="evd-signal-lines" viewBox="0 0 600 520" aria-hidden="true"><path class="evd-signal-line" d="M105 80 C190 110 210 180 300 260"/><path class="evd-signal-line cyan" d="M500 95 C410 115 390 185 300 260"/><path class="evd-signal-line cyan" d="M505 420 C415 390 390 325 300 260"/><path class="evd-signal-line" d="M95 420 C185 390 215 325 300 260"/></svg>
+            <article class="evd-signal-node evd-signal-node--asset"><div class="evd-signal-node-head"><span><i></i>Asset context</span><b>Verified</b></div><strong>Internet-facing API</strong><p>Ownership proven, production scope, business-critical authentication path.</p><div class="evd-signal-tags"><span>PROD</span><span>API</span><span>CRITICAL</span></div></article>
+            <article class="evd-signal-node evd-signal-node--threat" style="--signal:#04d9ff"><div class="evd-signal-node-head"><span><i></i>Threat context</span><b>Observed</b></div><strong>Exploitation signal</strong><p>Known exploitation and attack requirements raise response urgency.</p><div class="evd-signal-tags"><span>KEV</span><span>REMOTE</span><span>LOW EFFORT</span></div></article>
+            <article class="evd-signal-node evd-signal-node--control" style="--signal:#f4b41a"><div class="evd-signal-node-head"><span><i></i>Control state</span><b>Degraded</b></div><strong>Compensating control</strong><p>Rate limiting reduces exposure, but validation still confirms a reachable path.</p><div class="evd-signal-tags"><span>PARTIAL</span><span>RETEST</span></div></article>
+            <article class="evd-signal-node evd-signal-node--evidence" style="--signal:#a78bfa"><div class="evd-signal-node-head"><span><i></i>Evidence confidence</span><b>High</b></div><strong>Reproducible finding</strong><p>Request, response and scanner lifecycle are attached to the record.</p><div class="evd-signal-tags"><span>6 ITEMS</span><span>TRACEABLE</span></div></article>
+            <div class="evd-signal-core"><div class="evd-signal-core-content"><small>EVADA decision layer</small><strong>Fix first</strong><div class="evd-signal-score"><b>92</b><span>priority</span></div></div></div>
+            <div class="evd-signal-event"><i></i> Remediation validation queued</div>
           </div>
         </div>
       </section>
@@ -6022,6 +6360,7 @@
       // Dot & card click navigation
       dots.forEach((dot, i) => {
         dot.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 640px)").matches) return;
           const rect = section.getBoundingClientRect();
           const sectionTop = window.scrollY + rect.top;
           const totalScroll = rect.height - window.innerHeight;
@@ -6032,6 +6371,7 @@
 
       cards.forEach((card, i) => {
         card.addEventListener("click", () => {
+          if (window.matchMedia("(max-width: 640px)").matches) return;
           const rect = section.getBoundingClientRect();
           const sectionTop = window.scrollY + rect.top;
           const totalScroll = rect.height - window.innerHeight;

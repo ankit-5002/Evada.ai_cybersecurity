@@ -6,6 +6,7 @@ import {
   Bot,
   BrainCircuit,
   CheckCircle2,
+  ChevronRight,
   Clock3,
   Database,
   FileText,
@@ -165,13 +166,13 @@ export default function OverviewWorkspace() {
         </div>
       </section>
 
-      <section className={`grid gap-2.5 sm:grid-cols-2 ${summaryCards.length >= 5 ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"}`}>
+      <section className={`grid gap-2.5 grid-cols-1 sm:grid-cols-2 ${summaryCards.length >= 5 ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"}`}>
         {summaryCards.map((item) => (
-          <button key={item.label} type="button" onClick={() => router.push(item.href)} className="group flex min-h-[88px] items-center gap-3 rounded-[8px] border border-slate-200 bg-white p-3 text-left shadow-[0_8px_24px_rgba(15,23,42,0.035)] transition hover:-translate-y-0.5 hover:border-[#2ECE82]/45">
-            <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-[8px] ring-1 ${item.tone}`}><item.Icon className="h-5 w-5" /></span>
+          <button key={item.label} type="button" onClick={() => router.push(item.href)} className="group flex min-h-[80px] items-center gap-3 rounded-[8px] border border-slate-200 bg-white p-3 text-left shadow-[0_8px_24px_rgba(15,23,42,0.035)] transition hover:-translate-y-0.5 hover:border-[#2ECE82]/45 sm:min-h-[88px]">
+            <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-[8px] ring-1 sm:h-11 sm:w-11 ${item.tone}`}><item.Icon className="h-5 w-5" /></span>
             <span className="min-w-0 flex-1">
               <span className="block text-[10px] font-black uppercase tracking-[0.08em] text-slate-500">{item.label}</span>
-              <span className="mt-1 block text-[24px] font-black leading-none text-slate-950">{item.value}</span>
+              <span className="mt-1 block text-[22px] font-black leading-none text-slate-950 sm:text-[24px]">{item.value}</span>
               <span className="mt-1 block truncate text-[10px] font-bold text-slate-400">{item.helper}</span>
             </span>
             <ArrowRight className="h-4 w-4 shrink-0 text-slate-300 transition group-hover:text-[#16A86E]" />
@@ -209,9 +210,9 @@ export default function OverviewWorkspace() {
               </div>
               <div className="grid gap-5 p-4 md:grid-cols-[210px_minmax(0,1fr)] md:items-center">
                 <div className="grid place-items-center">
-                  <button type="button" onClick={() => router.push("/findings")} className="relative grid h-[168px] w-[168px] place-items-center rounded-full transition hover:scale-[1.02]" style={{ background: riskGradient(data.summary.findings, severityTotal) }} aria-label={`Open ${severityTotal} active Findings`}>
-                    <span className="absolute inset-[24px] grid place-items-center rounded-full bg-white shadow-[inset_0_0_0_1px_rgba(226,232,240,.9)]">
-                      <span className="text-center"><span className="block text-[30px] font-black leading-none text-slate-950">{severityTotal}</span><span className="mt-1 block text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">Active findings</span></span>
+                  <button type="button" onClick={() => router.push("/findings")} className="relative grid h-[160px] w-[160px] place-items-center rounded-full transition hover:scale-[1.02] sm:h-[168px] sm:w-[168px]" style={{ background: riskGradient(data.summary.findings, severityTotal) }} aria-label={`Open ${severityTotal} active Findings`}>
+                    <span className="absolute inset-[22px] grid place-items-center rounded-full bg-white shadow-[inset_0_0_0_1px_rgba(226,232,240,.9)] sm:inset-[24px]">
+                      <span className="text-center"><span className="block text-[28px] font-black leading-none text-slate-950 sm:text-[30px]">{severityTotal}</span><span className="mt-1 block text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">Active findings</span></span>
                     </span>
                   </button>
                   <div className="mt-3 flex items-center gap-2 text-[10px] font-bold text-slate-500"><ShieldCheck className="h-4 w-4 text-[#16A86E]" /> {data.summary.findings.resolved} resolved</div>
@@ -221,8 +222,8 @@ export default function OverviewWorkspace() {
                     const value = data.summary.findings[severity];
                     const share = percentage(value, severityTotal);
                     return (
-                      <button key={severity} type="button" onClick={() => router.push(`/findings?severity=${severity}`)} className="group grid grid-cols-[94px_minmax(80px,1fr)_54px] items-center gap-3 text-left">
-                        <span className="flex items-center gap-2 text-[10px] font-black text-slate-700"><span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: severityVisual[severity].color }} />{severityVisual[severity].label}</span>
+                      <button key={severity} type="button" onClick={() => router.push(`/findings?severity=${severity}`)} className="group grid grid-cols-[85px_minmax(60px,1fr)_48px] items-center gap-2 text-left sm:grid-cols-[94px_minmax(80px,1fr)_54px] sm:gap-3">
+                        <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-700 sm:gap-2"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: severityVisual[severity].color }} />{severityVisual[severity].label}</span>
                         <span className="h-2 overflow-hidden rounded-full bg-slate-100"><span className="block h-full rounded-full transition-all group-hover:brightness-95" style={{ width: `${share}%`, backgroundColor: severityVisual[severity].color }} /></span>
                         <span className="text-right text-[11px] font-black text-slate-950">{value} <span className="text-[8px] text-slate-400">{share}%</span></span>
                       </button>
@@ -242,7 +243,7 @@ export default function OverviewWorkspace() {
             <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
               <div className="border-b border-slate-100 px-4 py-3"><h3 className="text-[16px] font-black text-slate-950">Scan health</h3><p className="text-[11px] font-semibold text-slate-500">Current scanner lifecycle distribution.</p></div>
               <div className="p-4">
-                <div className="flex items-end justify-between gap-4"><div><p className="text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">All scans</p><p className="mt-1 text-[30px] font-black leading-none text-slate-950">{data.summary.scans.total}</p></div><button type="button" onClick={() => router.push("/scans")} className="text-[10px] font-black text-[#0891B2]">View history</button></div>
+                <div className="flex items-end justify-between gap-4"><div><p className="text-[9px] font-black uppercase tracking-[0.08em] text-slate-400">All scans</p><p className="mt-1 text-[26px] font-black leading-none text-slate-950 sm:text-[30px]">{data.summary.scans.total}</p></div><button type="button" onClick={() => router.push("/scans")} className="text-[10px] font-black text-[#0891B2]">View history</button></div>
                 <div className="mt-5 flex h-3 overflow-hidden rounded-full bg-slate-100" aria-label="Scan status distribution">
                   <span className="bg-[#20B778]" style={{ width: `${percentage(data.summary.scans.succeeded, data.summary.scans.total)}%` }} />
                   <span className="bg-[#06B6D4]" style={{ width: `${percentage(data.summary.scans.active, data.summary.scans.total)}%` }} />
@@ -257,42 +258,107 @@ export default function OverviewWorkspace() {
                 </div>
               </div>
               <div className="grid grid-cols-2 border-t border-slate-100 divide-x divide-slate-100">
-                <button type="button" onClick={() => router.push("/reports")} className="px-4 py-3 text-left transition hover:bg-slate-50"><p className="text-[9px] font-black uppercase text-slate-400">Ready reports</p><p className="mt-1 text-[18px] font-black text-emerald-700">{data.summary.reports.ready}</p></button>
-                <button type="button" onClick={() => router.push("/assets")} className="px-4 py-3 text-left transition hover:bg-slate-50"><p className="text-[9px] font-black uppercase text-slate-400">Verified assets</p><p className="mt-1 text-[18px] font-black text-slate-950">{data.summary.assets.active}</p></button>
+                <button type="button" onClick={() => router.push("/reports")} className="px-4 py-3 text-left transition hover:bg-slate-50"><p className="text-[9px] font-black uppercase text-slate-400">Ready reports</p><p className="mt-1 text-[16px] font-black text-emerald-700 sm:text-[18px]">{data.summary.reports.ready}</p></button>
+                <button type="button" onClick={() => router.push("/assets")} className="px-4 py-3 text-left transition hover:bg-slate-50"><p className="text-[9px] font-black uppercase text-slate-400">Verified assets</p><p className="mt-1 text-[16px] font-black text-slate-950 sm:text-[18px]">{data.summary.assets.active}</p></button>
               </div>
             </article>
           ) : null}
         </section>
       ) : null}
 
-      {canViewScans || canViewFindings ? <section className={`grid items-start gap-4 ${canViewScans && canViewFindings ? "xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,.65fr)]" : ""}`}>
-        {canViewScans ? <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3"><div><h3 className="text-[16px] font-black">Recent scans</h3><p className="text-[11px] font-semibold text-slate-500">Latest scanner activity in this tenant.</p></div><button type="button" onClick={() => router.push("/scans")} className="text-[11px] font-black text-[#0891B2]">View all</button></div>
-          {data.recent_scans.length ? <div className="overflow-x-auto"><table className="w-full min-w-[700px] text-left"><thead className="bg-slate-50 text-[9px] font-black uppercase tracking-[0.08em] text-slate-500"><tr><th className="px-4 py-3">Scan</th><th className="px-4 py-3">Asset</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Findings</th><th className="px-4 py-3">Updated</th></tr></thead><tbody className="divide-y divide-slate-100">{data.recent_scans.map((scan) => <tr key={scan.id} onClick={() => router.push(`/scans/${scan.id}`)} className="cursor-pointer text-[11px] font-bold text-slate-600 transition hover:bg-slate-50"><td className="px-4 py-3"><p className="font-black text-slate-950">{scan.name}</p><p className="mt-0.5 text-[9px] uppercase text-slate-400">{scan.scanner}</p></td><td className="px-4 py-3"><p className="font-black text-slate-800">{scan.asset_name}</p><p className="max-w-[230px] truncate text-[9px] text-slate-400">{scan.target}</p></td><td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase ring-1 ${statusTone(scan.status)}`}>{scan.status}</span></td><td className="px-4 py-3 font-black text-slate-950">{scan.findings_count}</td><td className="px-4 py-3 text-[10px]">{formatTime(scan.completed_at || scan.created_at)}</td></tr>)}</tbody></table></div> : <div className="p-8 text-center text-[12px] font-bold text-slate-500">No scans have been created for this workspace.</div>}
-        </article> : null}
+      {canViewScans || canViewFindings ? (
+        <section className={`grid items-start gap-4 ${canViewScans && canViewFindings ? "xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,.65fr)]" : ""}`}>
+          {canViewScans ? (
+            <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
+              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                <div><h3 className="text-[16px] font-black text-slate-950">Recent scans</h3><p className="text-[11px] font-semibold text-slate-500">Latest scanner activity in this tenant.</p></div>
+                <button type="button" onClick={() => router.push("/scans")} className="text-[11px] font-black text-[#0891B2]">View all</button>
+              </div>
+              {data.recent_scans.length ? (
+                <>
+                  <div className="hidden overflow-x-auto md:block">
+                    <table className="w-full min-w-[700px] text-left">
+                      <thead className="bg-slate-50 text-[9px] font-black uppercase tracking-[0.08em] text-slate-500">
+                        <tr><th className="px-4 py-3">Scan</th><th className="px-4 py-3">Asset</th><th className="px-4 py-3">Status</th><th className="px-4 py-3">Findings</th><th className="px-4 py-3">Updated</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {data.recent_scans.map((scan) => (
+                          <tr key={scan.id} onClick={() => router.push(`/scans/${scan.id}`)} className="cursor-pointer text-[11px] font-bold text-slate-600 transition hover:bg-slate-50">
+                            <td className="px-4 py-3"><p className="font-black text-slate-950">{scan.name}</p><p className="mt-0.5 text-[9px] uppercase text-slate-400">{scan.scanner}</p></td>
+                            <td className="px-4 py-3"><p className="font-black text-slate-800">{scan.asset_name}</p><p className="max-w-[230px] truncate text-[9px] text-slate-400">{scan.target}</p></td>
+                            <td className="px-4 py-3"><span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase ring-1 ${statusTone(scan.status)}`}>{scan.status}</span></td>
+                            <td className="px-4 py-3 font-black text-slate-950">{scan.findings_count}</td>
+                            <td className="px-4 py-3 text-[10px]">{formatTime(scan.completed_at || scan.created_at)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="divide-y divide-slate-100 md:hidden">
+                    {data.recent_scans.map((scan) => (
+                      <button key={scan.id} type="button" onClick={() => router.push(`/scans/${scan.id}`)} className="flex w-full items-start justify-between gap-3 p-3.5 text-left transition hover:bg-slate-50">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="truncate text-[12px] font-black text-slate-950">{scan.name}</p>
+                            <span className={`rounded-full px-2 py-0.5 text-[8px] font-black uppercase ring-1 ${statusTone(scan.status)}`}>{scan.status}</span>
+                          </div>
+                          <p className="mt-1 truncate text-[10px] font-bold text-slate-500">{scan.asset_name}</p>
+                          <div className="mt-2 flex items-center gap-3 text-[9px] font-semibold text-slate-400">
+                            <span>{scan.scanner}</span>
+                            <span>•</span>
+                            <span>{scan.findings_count} finding{scan.findings_count === 1 ? "" : "s"}</span>
+                            <span>•</span>
+                            <span>{formatTime(scan.completed_at || scan.created_at)}</span>
+                          </div>
+                        </div>
+                        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-slate-400" />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="p-8 text-center text-[12px] font-bold text-slate-500">No scans have been created for this workspace.</div>
+              )}
+            </article>
+          ) : null}
 
-        {canViewFindings ? <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3"><div><h3 className="text-[16px] font-black">Priority findings</h3><p className="text-[11px] font-semibold text-slate-500">Highest-impact work first.</p></div><button type="button" onClick={() => router.push("/findings")} className="text-[11px] font-black text-[#0891B2]">Open queue</button></div>
-          {data.priority_findings.length ? <div className="divide-y divide-slate-100">{data.priority_findings.map((finding) => <button key={finding.id} type="button" onClick={() => router.push(`/findings/${finding.id}`)} className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-slate-50"><span className={`mt-0.5 rounded-full px-2 py-1 text-[8px] font-black uppercase ring-1 ${severityTone[finding.severity]}`}>{finding.severity}</span><span className="min-w-0 flex-1"><span className="block line-clamp-2 text-[11px] font-black text-slate-950">{finding.title}</span><span className="mt-1 block truncate text-[9px] font-bold text-slate-400">{finding.asset_name} - {finding.occurrence_count} observation{finding.occurrence_count === 1 ? "" : "s"}</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-300" /></button>)}</div> : <div className="flex min-h-[160px] items-center justify-center gap-2 p-6 text-[12px] font-bold text-slate-500"><CheckCircle2 className="h-5 w-5 text-[#16A86E]" /> No active Findings.</div>}
-        </article> : null}
-      </section> : null}
+          {canViewFindings ? (
+            <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
+              <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3"><div><h3 className="text-[16px] font-black">Priority findings</h3><p className="text-[11px] font-semibold text-slate-500">Highest-impact work first.</p></div><button type="button" onClick={() => router.push("/findings")} className="text-[11px] font-black text-[#0891B2]">Open queue</button></div>
+              {data.priority_findings.length ? (
+                <div className="divide-y divide-slate-100">
+                  {data.priority_findings.map((finding) => (
+                    <button key={finding.id} type="button" onClick={() => router.push(`/findings/${finding.id}`)} className="flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-slate-50">
+                      <span className={`mt-0.5 shrink-0 rounded-full px-2 py-1 text-[8px] font-black uppercase ring-1 ${severityTone[finding.severity]}`}>{finding.severity}</span>
+                      <span className="min-w-0 flex-1"><span className="block line-clamp-2 text-[11px] font-black text-slate-950">{finding.title}</span><span className="mt-1 block truncate text-[9px] font-bold text-slate-400">{finding.asset_name} - {finding.occurrence_count} observation{finding.occurrence_count === 1 ? "" : "s"}</span></span>
+                      <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-slate-300" />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex min-h-[160px] items-center justify-center gap-2 p-6 text-[12px] font-bold text-slate-500"><CheckCircle2 className="h-5 w-5 text-[#16A86E]" /> No active Findings.</div>
+              )}
+            </article>
+          ) : null}
+        </section>
+      ) : null}
 
       <section className="grid items-start gap-4 lg:grid-cols-2">
         {activeWorkspace?.permissions.modules.includes("ai_pentester") ? (
           <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-[#071514] text-white shadow-[0_12px_32px_rgba(5,20,18,0.12)]">
-            <div className="grid gap-4 p-4 sm:grid-cols-[48px_minmax(0,1fr)_auto] sm:items-center">
-              <span className="grid h-12 w-12 place-items-center rounded-[8px] bg-[#12332B] text-[#2ECE82] ring-1 ring-emerald-400/20"><BrainCircuit className="h-5 w-5" /></span>
-              <div><span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-cyan-300"><Clock3 className="h-3.5 w-3.5" /> Preview capability</span><h3 className="mt-1 text-[16px] font-black">AI Pentester</h3><p className="mt-1 text-[10px] font-semibold leading-5 text-slate-300">The workflow interface is available. Live AI orchestration and execution workers are not connected yet.</p></div>
-              <button type="button" onClick={() => router.push("/ai-pentester")} className="inline-flex h-9 items-center justify-center gap-2 rounded-[8px] border border-white/15 px-3 text-[10px] font-black transition hover:border-[#2ECE82]/50 hover:bg-white/5">Open preview <ArrowRight className="h-3.5 w-3.5" /></button>
+            <div className="grid gap-3.5 p-4 sm:grid-cols-[48px_minmax(0,1fr)_auto] sm:items-center">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[8px] bg-[#12332B] text-[#2ECE82] ring-1 ring-emerald-400/20"><BrainCircuit className="h-5 w-5" /></span>
+              <div className="min-w-0"><span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-cyan-300"><Clock3 className="h-3.5 w-3.5" /> Preview capability</span><h3 className="mt-1 text-[16px] font-black">AI Pentester</h3><p className="mt-1 text-[10px] font-semibold leading-5 text-slate-300">The workflow interface is available. Live AI orchestration and execution workers are not connected yet.</p></div>
+              <button type="button" onClick={() => router.push("/ai-pentester")} className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-[8px] border border-white/15 px-3 text-[10px] font-black transition hover:border-[#2ECE82]/50 hover:bg-white/5 sm:w-auto">Open preview <ArrowRight className="h-3.5 w-3.5" /></button>
             </div>
           </article>
         ) : null}
         {activeWorkspace?.permissions.modules.includes("network_agent") ? (
           <article className="overflow-hidden rounded-[8px] border border-slate-200 bg-white shadow-[0_10px_28px_rgba(15,23,42,0.035)]">
-            <div className="grid gap-4 p-4 sm:grid-cols-[48px_minmax(0,1fr)_auto] sm:items-center">
-              <span className="grid h-12 w-12 place-items-center rounded-[8px] bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100"><Bot className="h-5 w-5" /></span>
-              <div><span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-slate-400"><LockKeyhole className="h-3.5 w-3.5" /> Integration pending</span><h3 className="mt-1 text-[16px] font-black text-slate-950">Network Agent</h3><p className="mt-1 text-[10px] font-semibold leading-5 text-slate-500">Agent setup screens are available. Enrollment, heartbeat and live device telemetry remain disconnected.</p></div>
-              <button type="button" onClick={() => router.push("/network-agent")} className="inline-flex h-9 items-center justify-center gap-2 rounded-[8px] border border-slate-200 px-3 text-[10px] font-black text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700">Open preview <ArrowRight className="h-3.5 w-3.5" /></button>
+            <div className="grid gap-3.5 p-4 sm:grid-cols-[48px_minmax(0,1fr)_auto] sm:items-center">
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-[8px] bg-cyan-50 text-cyan-700 ring-1 ring-cyan-100"><Bot className="h-5 w-5" /></span>
+              <div className="min-w-0"><span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.1em] text-slate-400"><LockKeyhole className="h-3.5 w-3.5" /> Integration pending</span><h3 className="mt-1 text-[16px] font-black text-slate-950">Network Agent</h3><p className="mt-1 text-[10px] font-semibold leading-5 text-slate-500">Agent setup screens are available. Enrollment, heartbeat and live device telemetry remain disconnected.</p></div>
+              <button type="button" onClick={() => router.push("/network-agent")} className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-[8px] border border-slate-200 px-3 text-[10px] font-black text-slate-700 transition hover:border-cyan-200 hover:text-cyan-700 sm:w-auto">Open preview <ArrowRight className="h-3.5 w-3.5" /></button>
             </div>
           </article>
         ) : null}

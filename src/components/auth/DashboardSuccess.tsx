@@ -31,6 +31,7 @@ import {
   LockKeyhole,
   LogOut,
   MapPin,
+  Menu,
   MonitorCog,
   MoreVertical,
   Network,
@@ -50,6 +51,7 @@ import {
   Users,
   Wifi,
   WifiOff,
+  X,
   Zap,
 } from "lucide-react";
 import { useLoadingRouter } from "@/components/loading/PageLoadingProvider";
@@ -1797,6 +1799,7 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
   const { activeWorkspace, user, loading: workspaceLoading, error: sessionError } = useWorkspace();
   const [activeSection, setActiveSection] = useState<DashboardSection>(initialSection);
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [aiPentesterOpen, setAiPentesterOpen] = useState(initialSection === "ai-pentester");
   const [showLoginToast, setShowLoginToast] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
@@ -2148,12 +2151,14 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
     }
 
     setAiPentesterOpen(false);
+    setMobileMenuOpen(false);
     if (item.href && pathname !== item.href) router.push(item.href);
   };
 
   const moveToAiPentesterItem = (item: NavChildItem) => {
     setActiveSection("ai-pentester");
     setAiPentesterOpen(true);
+    setMobileMenuOpen(false);
     if (pathname !== item.href) router.push(item.href);
   };
 
@@ -2351,19 +2356,156 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
         </aside>
 
         <section className="flex h-full min-w-0 flex-1 flex-col overflow-hidden bg-white">
-          <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/92 px-4 py-2.5 backdrop-blur-xl sm:px-6 lg:px-7">
-            <div className="flex flex-col gap-2 md:flex-row md:flex-nowrap md:items-center md:justify-between">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-[8px] bg-[#071010] text-[#2ECE82] shadow-[0_12px_26px_rgba(7,16,16,0.14)]">
-                  <ActivePageIcon className="h-4.5 w-4.5" />
+          {mobileMenuOpen ? (
+            <div className="fixed inset-0 z-[90] lg:hidden" role="dialog" aria-modal="true" aria-label="Mobile workspace navigation">
+              <div
+                className="fixed inset-0 bg-black/65 backdrop-blur-sm transition-opacity"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="fixed inset-y-0 left-0 flex w-[min(320px,85vw)] flex-col bg-[#071010] text-white shadow-2xl transition-transform">
+                <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_82%_16%,rgba(46,206,130,0.16),transparent_28%),radial-gradient(circle_at_12%_80%,rgba(14,165,233,0.10),transparent_28%)]" />
+                <div className="relative z-10 flex h-full min-h-0 flex-col p-4 sm:p-5">
+                  <div className="flex shrink-0 items-center justify-between gap-3 border-b border-white/10 pb-4">
+                    <Link
+                      href="/"
+                      prefetch={false}
+                      onClick={() => setMobileMenuOpen(false)}
+                      aria-label="Go to EVADA home"
+                      className="flex items-center gap-2.5 rounded-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2ECE82]"
+                    >
+                      <Image
+                        src="/logos/logo.png"
+                        alt="EVADA"
+                        width={2890}
+                        height={631}
+                        priority
+                        className="h-auto w-[118px] object-contain"
+                      />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.06] text-white/70 transition hover:bg-white/[0.12] hover:text-white"
+                      aria-label="Close navigation"
+                    >
+                      <X className="h-4.5 w-4.5" />
+                    </button>
+                  </div>
+
+                  <div className="mt-4 shrink-0 rounded-[8px] border border-white/10 bg-white/[0.06] p-3 text-white">
+                    <div className="flex items-center gap-2.5">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-[6px] bg-[#2ECE82]/14 text-[#2ECE82]">
+                        <Database className="h-4 w-4" />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[12px] font-black text-white">{activeWorkspace?.name || "Workspace"}</p>
+                        <p className="text-[10px] font-bold capitalize text-white/45">{activeWorkspace?.role || "loading"} • {activeWorkspace?.plan_code || "Plan"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <nav
+                    className="mt-4 grid min-h-0 flex-1 content-start gap-1.5 overflow-y-auto overscroll-contain pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                    aria-label="Mobile navigation"
+                  >
+                    {visibleNavItems.map((item) => {
+                      const Icon = item.Icon;
+                      const active = activeSection === item.id;
+                      const dropdownIconClass = active
+                        ? aiPentesterOpen
+                          ? "rotate-90 text-[#16A86E]"
+                          : "text-[#071010]/55"
+                        : aiPentesterOpen
+                          ? "rotate-90 text-[#2ECE82]"
+                          : "text-white/44";
+
+                      return (
+                        <div key={item.id} className="grid gap-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              moveToSection(item);
+                              if (item.id !== "ai-pentester") setMobileMenuOpen(false);
+                            }}
+                            className={`group flex h-11 items-center gap-3 rounded-[8px] px-3.5 text-left text-[13px] font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2ECE82] ${
+                              active
+                                ? "bg-white text-[#071010] shadow-[0_12px_28px_rgba(0,0,0,0.25)]"
+                                : "text-white/70 hover:bg-white/[0.08] hover:text-white"
+                            }`}
+                          >
+                            <Icon className={`h-4.5 w-4.5 shrink-0 ${active ? "text-[#16A86E]" : "text-[#75E7FF]/80 group-hover:text-[#2ECE82]"}`} />
+                            <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                            {item.children ? <ChevronRight className={`h-4 w-4 shrink-0 transition ${dropdownIconClass}`} /> : null}
+                          </button>
+
+                          {item.children && aiPentesterOpen ? (
+                            <div className="ml-5 grid gap-1 border-l border-white/10 pl-3">
+                              {item.children.map((child) => {
+                                const ChildIcon = child.Icon;
+                                const childActive = pathname === child.href;
+
+                                return (
+                                  <button
+                                    key={child.href}
+                                    type="button"
+                                    onClick={() => {
+                                      moveToAiPentesterItem(child);
+                                      setMobileMenuOpen(false);
+                                    }}
+                                    className={`flex h-9 items-center gap-2 rounded-[8px] px-3 text-left text-[12px] font-black transition ${
+                                      childActive ? "bg-[#2ECE82]/16 text-white" : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                                    }`}
+                                  >
+                                    <ChildIcon className={`h-4 w-4 shrink-0 ${childActive ? "text-[#2ECE82]" : "text-[#75E7FF]/70"}`} />
+                                    <span className="min-w-0 flex-1 truncate">{child.label}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          ) : null}
+                        </div>
+                      );
+                    })}
+                  </nav>
+
+                  <div className="mt-3 shrink-0 border-t border-white/10 pt-3">
+                    <button
+                      type="button"
+                      onClick={signOut}
+                      className="flex h-11 w-full items-center justify-start gap-3 rounded-[8px] border border-red-400/20 bg-red-500/12 px-3.5 text-[13px] font-black text-red-100 transition hover:bg-red-500/18 hover:text-white"
+                    >
+                      <LogOut className="h-4.5 w-4.5 shrink-0" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/92 px-3 py-2.5 backdrop-blur-xl sm:px-6 lg:px-7">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-[#2ECE82]/40 hover:bg-slate-50 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2ECE82] lg:hidden"
+                  aria-label="Open mobile workspace menu"
+                  aria-expanded={mobileMenuOpen}
+                >
+                  <Menu className="h-4.5 w-4.5" />
+                </button>
+                <div className="hidden h-9 w-9 shrink-0 place-items-center rounded-[8px] bg-[#071010] text-[#2ECE82] shadow-[0_12px_26px_rgba(7,16,16,0.14)] min-[380px]:grid sm:h-10 sm:w-10">
+                  <ActivePageIcon className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase text-[#0891B2]">EVADA Dashboard</p>
-                  <h1 className="truncate text-[22px] font-black leading-tight text-slate-950 sm:text-[24px]">{activePageLabel}</h1>
+                  <p className="hidden text-[9px] font-black uppercase tracking-wider text-[#0891B2] sm:block">EVADA Dashboard</p>
+                  <h1 className="truncate text-[17px] font-black leading-tight text-slate-950 sm:text-[22px] md:text-[24px]">{activePageLabel}</h1>
                 </div>
               </div>
 
-              <div className="flex min-w-0 w-full flex-nowrap items-center justify-end gap-2 md:w-auto">
+              <div className="flex min-w-0 shrink-0 items-center justify-end gap-1.5 sm:gap-2">
                 <HeaderCommandCenter
                   canCreateAsset={canAction("assets", "create")}
                   canStartScan={canAction("scans", "execute")}
@@ -2372,7 +2514,7 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
                 />
                 {activeWorkspace?.access_expires_at && activeWorkspace.days_remaining !== null ? (
                   <span
-                    className={`inline-flex h-9 min-w-14 items-center justify-center gap-1.5 rounded-[8px] border px-2.5 text-[10px] font-black ${
+                    className={`hidden h-9 min-w-14 items-center justify-center gap-1.5 rounded-[8px] border px-2.5 text-[10px] font-black sm:inline-flex ${
                       activeWorkspace.days_remaining <= 7
                         ? "border-amber-200 bg-amber-50 text-amber-700"
                         : "border-emerald-200 bg-emerald-50 text-emerald-700"
@@ -2507,28 +2649,24 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
             </div>
           </header>
 
-          <div className="border-b border-slate-200 bg-white px-4 py-3 sm:px-6 lg:hidden">
-            <div className="mb-3 flex items-center gap-3">
-              <span className="shrink-0 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Workspace</span>
-              <span className="inline-flex h-9 min-w-0 items-center gap-2 rounded-[8px] border border-slate-200 bg-slate-50 px-3"><Database className="h-4 w-4 shrink-0 text-[#16A86E]" /><span className="truncate text-[11px] font-black text-slate-800">{activeWorkspace?.name || "Workspace"}</span></span>
-            </div>
-            <div className="flex gap-2 overflow-x-auto overscroll-x-contain pb-1">
+          <div className="border-b border-slate-200 bg-white px-3 py-2 sm:px-6 lg:hidden">
+            <div className="flex gap-1.5 overflow-x-auto overscroll-x-contain pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {visibleNavItems.map((item) => {
                 const Icon = item.Icon;
                 const active = activeSection === item.id;
 
                 return (
-                  <div key={item.id} className="flex shrink-0 items-center gap-2">
+                  <div key={item.id} className="flex shrink-0 items-center gap-1">
                     <button
                       type="button"
                       onClick={() => moveToSection(item)}
-                      className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-[12px] font-black ${
-                        active ? "border-[#071010] bg-[#071010] text-white" : "border-slate-200 bg-white text-slate-600"
+                      className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[11px] font-black transition ${
+                        active ? "border-[#071010] bg-[#071010] text-white shadow-sm" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                       }`}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-3.5 w-3.5" />
                       {item.label}
-                      {item.children ? <ChevronRight className={`h-3.5 w-3.5 transition ${aiPentesterOpen ? "rotate-90" : ""}`} /> : null}
+                      {item.children ? <ChevronRight className={`h-3 w-3 transition ${aiPentesterOpen ? "rotate-90" : ""}`} /> : null}
                     </button>
                     {item.children && aiPentesterOpen ? (
                       <>
@@ -2541,11 +2679,11 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
                               key={child.href}
                               type="button"
                               onClick={() => moveToAiPentesterItem(child)}
-                              className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-[12px] font-black ${
-                                childActive ? "border-[#2ECE82] bg-[#E8FFF3] text-[#071010]" : "border-slate-200 bg-white text-slate-600"
+                              className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-[11px] font-black transition ${
+                                childActive ? "border-[#2ECE82] bg-[#E8FFF3] text-[#071010]" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                               }`}
                             >
-                              <ChildIcon className="h-4 w-4" />
+                              <ChildIcon className="h-3.5 w-3.5" />
                               {child.label}
                             </button>
                           );
@@ -2555,14 +2693,10 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
                   </div>
                 );
               })}
-              <button type="button" onClick={signOut} className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-red-100 bg-red-50 px-4 text-[12px] font-black text-red-700">
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
             </div>
           </div>
 
-          <section className="evada-workspace-scroll min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-white px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          <section className="evada-workspace-scroll min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto overscroll-contain bg-white px-3 py-4 sm:px-6 lg:px-8 lg:py-8">
             {sessionError ? (
               <div className="mb-5 rounded-[8px] border border-red-100 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-800">{sessionError}</div>
             ) : null}
@@ -2592,7 +2726,7 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
                   </div>
                 ) : null}
 
-                <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                <section className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                   {aiAdHocMetrics.map((item) => (
                     <article key={item.label} className="min-h-[92px] rounded-[8px] border border-slate-200 bg-white px-4 py-3 shadow-[0_6px_16px_rgba(15,23,42,0.03)]">
                       <div className="flex h-full items-center gap-3">
@@ -6617,4 +6751,3 @@ export default function DashboardSuccess({ initialSection = "overview" }: Dashbo
     </main>
   );
 }
-

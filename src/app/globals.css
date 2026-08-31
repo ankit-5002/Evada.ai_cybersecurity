@@ -717,6 +717,126 @@ html.lenis.lenis-stopped {
   }
 }
 
+/* Shared responsive guardrails for public, authentication and workspace UIs. */
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.evada-product-ui,
+.evada-homepage,
+[data-evada-workspace-route] {
+  min-width: 0;
+  width: 100%;
+  max-width: 100vw;
+}
+
+.evada-product-ui :where(h1, h2, h3, p, dd, td),
+.evada-homepage :where(h1, h2, h3, p, dd, td) {
+  overflow-wrap: anywhere;
+}
+
+.evada-workspace-scroll > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 639px) {
+  /* Avoid iOS form zoom and keep controls usable on narrow phones. */
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  .evada-product-ui {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  .evada-workspace-scroll {
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+  }
+
+  .evada-workspace-scroll :where(section, article, form, fieldset, header, footer) {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .evada-workspace-scroll :where(.flex).justify-between {
+    row-gap: 0.625rem;
+  }
+
+  .evada-workspace-scroll :where(table) {
+    white-space: normal;
+  }
+
+  [role="dialog"] > section,
+  [role="dialog"] > div:not([aria-hidden="true"]) {
+    max-height: calc(100dvh - 1.5rem);
+    max-width: calc(100vw - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+@media (max-width: 379px) {
+  .evada-workspace-scroll {
+    padding-top: 0.75rem;
+  }
+
+  .evada-product-ui header {
+    padding-inline: 0.5rem;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  html,
+  body {
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html.lenis,
+  html.lenis body,
+  html.lenis.lenis-stopped {
+    height: auto;
+    overflow-y: auto !important;
+  }
+
+  .evada-product-ui button,
+  .evada-product-ui a,
+  .evada-homepage button,
+  .evada-homepage a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .evada-homepage canvas {
+    touch-action: pan-y pinch-zoom !important;
+  }
+}
+
 .evada-bracket-button,
 .evada-primary-btn,
 .evada-gradient-cta {

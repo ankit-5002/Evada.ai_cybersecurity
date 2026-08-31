@@ -500,7 +500,7 @@ function AssetInventory() {
 
   return (
     <div className="grid gap-3">
-      <section className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-2.5 grid-cols-1 sm:grid-cols-2 xl:grid-cols-5">
         {metrics.map((metric) => (
           <article key={metric.label} className="rounded-[8px] border border-slate-200 bg-white px-3.5 py-3 shadow-[0_6px_16px_rgba(15,23,42,0.03)]">
             <div className="flex items-center gap-3">
@@ -544,7 +544,28 @@ function AssetInventory() {
                 ))}</tbody>
               </table>
             </div>
-            <div className="grid gap-2 p-3 md:hidden">{assets.map((asset) => <button key={asset.id} type="button" onClick={() => router.push(`/assets/${asset.id}`)} className="grid gap-3 rounded-[8px] border border-slate-200 bg-white p-3 text-left"><div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] bg-[#E8FFF3] text-[#16A86E]"><AssetTypeIcon asset={asset} /></span><div className="min-w-0"><p className="truncate text-[13px] font-black text-slate-950">{asset.name}</p><p className="mt-1 truncate font-mono text-[10px] font-semibold text-slate-500">{asset.canonical_target}</p></div></div><ChevronRight className="h-4 w-4 text-slate-400" /></div><div className="flex flex-wrap gap-2"><Badge className={statusClasses(asset.status)}>{asset.status === "active" ? "Verified" : titleCase(asset.verification_status)}</Badge><Badge className={riskClasses(asset.risk)}>{titleCase(asset.risk)}</Badge></div></button>)}</div>
+            <div className="grid gap-2 p-3 md:hidden">{assets.map((asset) => (
+              <div key={asset.id} className="grid gap-3 rounded-[8px] border border-slate-200 bg-white p-3 text-left shadow-sm">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[8px] bg-[#E8FFF3] text-[#16A86E]"><AssetTypeIcon asset={asset} /></span>
+                    <div className="min-w-0">
+                      <Link href={`/assets/${asset.id}`} className="block truncate text-[13px] font-black text-slate-950 hover:text-[#16A86E]">{asset.name}</Link>
+                      <p className="mt-0.5 truncate font-mono text-[10px] font-semibold text-slate-500">{asset.canonical_target}</p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button type="button" onClick={() => router.push(`/assets/${asset.id}`)} title="Open Asset" aria-label={`Open ${asset.name}`} className="grid h-8 w-8 place-items-center rounded-[8px] border border-slate-200 bg-white text-slate-500 transition hover:border-[#2ECE82]/50 hover:text-slate-950"><ArrowRight className="h-3.5 w-3.5" /></button>
+                    {canEdit && asset.status !== "archived" ? <button type="button" onClick={() => router.push(`/assets/${asset.id}/edit`)} title="Edit Asset" aria-label={`Edit ${asset.name}`} className="grid h-8 w-8 place-items-center rounded-[8px] border border-slate-200 bg-white text-slate-500 transition hover:border-[#2ECE82]/50 hover:text-slate-950"><Edit3 className="h-3.5 w-3.5" /></button> : null}
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-slate-500">
+                  <Badge className={statusClasses(asset.status)}>{asset.status === "active" ? "Verified" : titleCase(asset.verification_status)}</Badge>
+                  <Badge className={riskClasses(asset.risk)}>{titleCase(asset.risk)}</Badge>
+                  <span className="ml-auto text-[10px] text-slate-400">{formatDate(asset.updated_at)}</span>
+                </div>
+              </div>
+            ))}</div>
           </>
         ) : !loading ? (
           <div className="grid min-h-80 place-items-center p-6 text-center"><div className="max-w-sm"><span className="mx-auto grid h-14 w-14 place-items-center rounded-[8px] bg-[#071010] text-[#2ECE82]"><Filter className="h-6 w-6" /></span><h3 className="mt-4 text-[18px] font-black text-slate-950">{summary.total === 0 ? "Add your first authorized Asset" : "No Assets match this view"}</h3><p className="mt-2 text-[12px] font-semibold leading-relaxed text-slate-500">{summary.total === 0 ? "Create a target, prove ownership, and make it available to EVADA scanners." : "Adjust the filters or search term to return to the inventory."}</p>{canCreate && summary.total === 0 ? <button type="button" onClick={() => router.push("/assets/new")} className="mt-4 inline-flex h-10 items-center gap-2 rounded-[8px] bg-[#2ECE82] px-4 text-[12px] font-black text-[#071010]"><Plus className="h-4 w-4" />Add Asset</button> : null}</div></div>

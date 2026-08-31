@@ -617,6 +617,70 @@ export async function GET() {
     </div>
   </section>
 
+  <section id="continuous-validation" class="pf-lifecycle evd-lightsec" aria-label="Continuous validation lifecycle">
+    <div class="pf-lifecycle-inner">
+      <div class="pf-section-heading">
+        <span class="pf-section-kicker">CONTINUOUS VALIDATION</span>
+        <h2>From an authorised asset to evidence you can trust</h2>
+        <p>EVADA keeps the full security workflow connected. Scope is verified before testing, findings retain their evidence, and reports preserve the exact state that was reviewed.</p>
+      </div>
+      <div class="pf-lifecycle-track">
+        <article class="pf-lifecycle-card">
+          <span class="pf-lifecycle-number">01</span>
+          <span class="pf-lifecycle-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h3>Verify ownership</h3>
+          <p>Register web applications, APIs and infrastructure, then prove authorisation before any scanner can run.</p>
+          <span class="pf-lifecycle-status">Authorised scope</span>
+        </article>
+        <article class="pf-lifecycle-card">
+          <span class="pf-lifecycle-number">02</span>
+          <span class="pf-lifecycle-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4v6h6"/><path d="M20 20v-6h-6"/><path d="M5.5 15a8 8 0 0 0 13-2M18.5 9a8 8 0 0 0-13 2"/></svg></span>
+          <h3>Run governed scans</h3>
+          <p>Launch approved Web, TLS and AI-assisted validation while live stages and execution history remain visible.</p>
+          <span class="pf-lifecycle-status">Controlled execution</span>
+        </article>
+        <article class="pf-lifecycle-card">
+          <span class="pf-lifecycle-number">03</span>
+          <span class="pf-lifecycle-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5M12 18h.01"/></svg></span>
+          <h3>Triage real findings</h3>
+          <p>Normalised findings bring severity, affected assets, technical evidence and remediation into one review queue.</p>
+          <span class="pf-lifecycle-status">Prioritised risk</span>
+        </article>
+        <article class="pf-lifecycle-card">
+          <span class="pf-lifecycle-number">04</span>
+          <span class="pf-lifecycle-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
+          <h3>Issue immutable reports</h3>
+          <p>Create audit-ready VAPT snapshots with lifecycle history and downloadable PDF and JSON artifacts.</p>
+          <span class="pf-lifecycle-status">Defensible evidence</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="attack-surface-drift" class="pf-drift" aria-label="Attack surface drift monitoring">
+    <div class="pf-drift-inner">
+      <div class="pf-drift-head">
+        <div><span class="pf-drift-kicker">ATTACK SURFACE DRIFT</span><h2>Your environment changes between assessments. Your validation should too.</h2></div>
+        <p>New endpoints, certificates, services and configuration changes can alter exposure overnight. EVADA keeps authorised scope connected to continuous checks so security teams can see what changed and validate the impact before it becomes the next blind spot.</p>
+      </div>
+      <div class="pf-drift-canvas">
+        <div class="pf-drift-grid" aria-hidden="true"></div>
+        <div class="pf-drift-rail" aria-label="Exposure timeline">
+          <span class="pf-drift-time">09:00</span><i class="safe"></i>
+          <span class="pf-drift-time">11:24</span><i class="change"></i>
+          <span class="pf-drift-time">11:31</span><i class="risk"></i>
+          <span class="pf-drift-time">11:38</span><i class="validated"></i>
+          <span class="pf-drift-time">Now</span>
+        </div>
+        <article class="pf-drift-event pf-drift-event--baseline"><span class="pf-drift-event-icon">01</span><div><small>KNOWN BASELINE</small><strong>24 verified assets</strong><p>Web, API and infrastructure scope is authorised and continuously tracked.</p></div><b>Stable</b></article>
+        <article class="pf-drift-event pf-drift-event--change"><span class="pf-drift-event-icon">02</span><div><small>CHANGE DETECTED</small><strong>New authentication endpoint</strong><p>A production route appeared outside the last validated application map.</p></div><b>+1 surface</b></article>
+        <article class="pf-drift-event pf-drift-event--risk"><span class="pf-drift-event-icon">03</span><div><small>EXPOSURE CORRELATED</small><strong>TLS policy no longer aligned</strong><p>The new endpoint inherits a weaker configuration than the verified baseline.</p></div><b>High</b></article>
+        <article class="pf-drift-event pf-drift-event--validated"><span class="pf-drift-event-icon">04</span><div><small>VALIDATION RUNNING</small><strong>Targeted checks automatically scoped</strong><p>EVADA queues the relevant Web and TLS checks without repeating the full assessment.</p></div><b>72%</b><span class="pf-drift-progress"><i></i></span></article>
+        <div class="pf-drift-summary"><span><i></i>Continuous awareness</span><strong>Change becomes a validation decision—not a surprise.</strong><a href="/signup">See EVADA in action &rarr;</a></div>
+      </div>
+    </div>
+  </section>
+
   <!-- =========================================================
        SECTION B: ENTERPRISE INTEGRATION MESH
        ========================================================= -->
@@ -762,6 +826,8 @@ export async function GET() {
     .pf-orbital-inner,
     .pf-integrations-inner,
     .pf .evd-feat-inner,
+    .pf-lifecycle-inner,
+    .pf-command-inner,
     .pf-end-inner {
       width: 100%;
       min-width: 0;
@@ -777,6 +843,90 @@ export async function GET() {
 
     .pf-h2 { margin: 0 0 0.6rem; font-size: clamp(1.7rem, 2.2vw + 1rem, 2.6rem); line-height: 1.1; letter-spacing: 0; font-weight: 600; text-wrap: balance; }
     .pf-lede { margin: 0 0 2.6rem; font-size: 1.1rem; line-height: 1.6; color: rgba(20,16,10,0.55); max-width: 38rem; }
+
+    /* Connected operational lifecycle */
+    .pf-lifecycle { padding: clamp(4.5rem,7vw,7rem) clamp(1.25rem,5vw,4rem); background: #f7faf9; color: #071018; border-top: 1px solid rgba(7,16,24,.08); }
+    .pf-lifecycle-inner { max-width: 82rem; margin: 0 auto; }
+    .pf-section-heading { max-width: 48rem; margin-bottom: clamp(2.25rem,4vw,3.5rem); }
+    .pf-section-kicker, .pf-command-kicker { display: inline-block; margin-bottom: .8rem; font: 700 .72rem/1 'Aeonik Mono',monospace; color: #087547; }
+    .pf-section-heading h2, .pf-command-copy h2 { margin: 0; font: 600 clamp(2rem,3.4vw,3rem)/1.08 'Roobert','Geist',sans-serif; text-wrap: balance; }
+    .pf-section-heading p, .pf-command-copy > p { margin: 1rem 0 0; font-size: 1.05rem; line-height: 1.65; color: rgba(7,16,24,.62); }
+    .pf-lifecycle-track { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); border-top: 1px solid rgba(7,16,24,.14); border-bottom: 1px solid rgba(7,16,24,.14); }
+    .pf-lifecycle-card { position: relative; min-width: 0; padding: 1.6rem 1.35rem 1.5rem; border-right: 1px solid rgba(7,16,24,.12); transition: background .25s ease, transform .25s ease; }
+    .pf-lifecycle-card:last-child { border-right: 0; }
+    .pf-lifecycle-card:hover { background: #fff; transform: translateY(-4px); }
+    .pf-lifecycle-number { position: absolute; top: 1rem; right: 1rem; font: 700 .68rem/1 'Aeonik Mono',monospace; color: rgba(7,16,24,.3); }
+    .pf-lifecycle-icon { display: grid; width: 3rem; height: 3rem; place-items: center; color: #087547; background: #e8fff3; border: 1px solid rgba(46,206,130,.3); border-radius: 8px; }
+    .pf-lifecycle-card h3 { margin: 1.25rem 0 .65rem; font: 600 1.2rem/1.2 'Roobert',sans-serif; }
+    .pf-lifecycle-card p { min-height: 7.2rem; margin: 0; font-size: .9rem; line-height: 1.6; color: rgba(7,16,24,.6); }
+    .pf-lifecycle-status { display: inline-flex; margin-top: 1.25rem; padding: .35rem .6rem; border-radius: 999px; background: rgba(46,206,130,.1); color: #087547; font: 700 .68rem/1 'Aeonik Mono',monospace; }
+
+    /* Tenant command center */
+    .pf-command { padding: clamp(4.5rem,7vw,7rem) clamp(1.25rem,5vw,4rem); color: #edf6f1; background: radial-gradient(circle at 85% 20%,rgba(46,206,130,.16),transparent 28%),#071010; }
+    .pf-command-inner { max-width: 82rem; margin: 0 auto; display: grid; grid-template-columns: minmax(0,.8fr) minmax(32rem,1.2fr); gap: clamp(2.5rem,6vw,6rem); align-items: center; }
+    .pf-command-copy h2 { color: #fff; }
+    .pf-command-copy > p { color: rgba(237,246,241,.62); }
+    .pf-command-kicker { color: #2ece82; }
+    .pf-command-points { display: grid; gap: 1rem; margin-top: 2rem; }
+    .pf-command-points div { padding-left: 1rem; border-left: 2px solid #2ece82; }
+    .pf-command-points strong, .pf-command-points span { display: block; }
+    .pf-command-points strong { font-size: .95rem; color: #fff; }
+    .pf-command-points span { margin-top: .2rem; font-size: .82rem; line-height: 1.5; color: rgba(237,246,241,.52); }
+    .pf-command-link { display: inline-flex; gap: .6rem; margin-top: 2rem; color: #bfffe1; font-weight: 600; text-decoration: none; }
+    .pf-command-visual { overflow: hidden; min-width: 0; border: 1px solid rgba(255,255,255,.13); border-radius: 12px; background: #fff; color: #071018; box-shadow: 0 35px 90px rgba(0,0,0,.38); transform: rotate(1deg); }
+    .pf-command-top { display: flex; justify-content: space-between; align-items: center; padding: .85rem 1rem; color: #fff; background: #0b1b17; font-size: .78rem; font-weight: 700; }
+    .pf-command-top i { display: inline-block; width: .5rem; height: .5rem; margin-right: .4rem; border-radius: 50%; background: #2ece82; box-shadow: 0 0 12px #2ece82; }
+    .pf-command-top b { padding: .28rem .55rem; border-radius: 999px; color: #071018; background: #2ece82; font-size: .62rem; }
+    .pf-command-body { display: grid; grid-template-columns: 7.5rem minmax(0,1fr); min-height: 22rem; }
+    .pf-command-sidebar { display: grid; align-content: start; gap: .35rem; padding: 1rem .7rem; color: rgba(255,255,255,.55); background: #071010; font-size: .72rem; font-weight: 600; }
+    .pf-command-sidebar span { padding: .65rem .7rem; border-radius: 6px; }
+    .pf-command-sidebar .active { color: #071018; background: #fff; }
+    .pf-command-main { min-width: 0; padding: 1.2rem; background: #f7faf9; }
+    .pf-command-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .6rem; }
+    .pf-command-metrics div { padding: .85rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; }
+    .pf-command-metrics small, .pf-command-metrics strong { display: block; }
+    .pf-command-metrics small { color: #64748b; font-size: .62rem; }
+    .pf-command-metrics strong { margin-top: .35rem; font-size: 1.4rem; }
+    .pf-command-operation, .pf-command-rows { margin-top: .8rem; padding: .9rem; border: 1px solid #dbeafe; border-radius: 8px; background: #fff; font-size: .7rem; }
+    .pf-command-operation > span { display: inline-flex; align-items: center; gap: .4rem; }
+    .pf-command-operation > span i { width: .5rem; height: .5rem; border-radius: 50%; background: #06b6d4; }
+    .pf-command-operation em { float: right; color: #0891b2; font-style: normal; font-weight: 700; }
+    .pf-command-operation > div { clear: both; height: .35rem; margin-top: .75rem; overflow: hidden; border-radius: 99px; background: #e2e8f0; }
+    .pf-command-operation > div i { display: block; height: 100%; background: #2ece82; }
+    .pf-command-rows { display: grid; gap: 0; padding: 0; overflow: hidden; }
+    .pf-command-rows span { display: grid; grid-template-columns: .55rem minmax(0,1fr) auto; gap: .55rem; align-items: center; padding: .8rem; border-bottom: 1px solid #edf2f7; }
+    .pf-command-rows span:last-child { border-bottom: 0; }
+    .pf-command-rows i { width: .5rem; height: .5rem; border-radius: 50%; background: #f43f5e; }
+    .pf-command-rows i.medium { background: #f59e0b; }.pf-command-rows i.ready { background: #2ece82; }
+    .pf-command-rows b { font-size: .58rem; text-transform: uppercase; color: #64748b; }
+
+    /* Attack-surface drift timeline */
+    .pf-drift { padding: clamp(4.5rem,7vw,7rem) clamp(1.25rem,5vw,4rem); overflow:hidden; color:#edf6f1; background:linear-gradient(145deg,#06100d 0%,#081b17 56%,#071018 100%); }
+    .pf-drift-inner { width:100%; max-width:82rem; margin:0 auto; }
+    .pf-drift-head { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(20rem,.65fr); gap:clamp(2rem,6vw,6rem); align-items:end; }
+    .pf-drift-kicker { display:inline-block; margin-bottom:.85rem; color:#2ece82; font:700 .72rem/1 'Aeonik Mono',monospace; }
+    .pf-drift-head h2 { max-width:18ch; margin:0; color:#fff; font:600 clamp(2rem,3.4vw,3rem)/1.07 'Roobert','Geist',sans-serif; text-wrap:balance; }
+    .pf-drift-head p { margin:0; color:rgba(237,246,241,.58); font-size:.98rem; line-height:1.65; }
+    .pf-drift-canvas { position:relative; min-height:35rem; margin-top:3.5rem; overflow:hidden; border:1px solid rgba(255,255,255,.1); border-radius:16px; background:radial-gradient(circle at 50% 55%,rgba(46,206,130,.1),transparent 35%),rgba(3,12,10,.56); box-shadow:0 30px 80px rgba(0,0,0,.3); }
+    .pf-drift-grid { position:absolute; inset:0; opacity:.18; background-image:linear-gradient(rgba(255,255,255,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.1) 1px,transparent 1px); background-size:40px 40px; mask-image:linear-gradient(to bottom,#000,transparent 95%); }
+    .pf-drift-rail { position:absolute; top:50%; left:5%; right:5%; display:grid; grid-template-columns:auto 1fr auto 1fr auto 1fr auto 1fr auto; align-items:center; gap:.55rem; transform:translateY(-50%); }
+    .pf-drift-rail::before { content:""; position:absolute; left:1.5rem; right:1.5rem; top:50%; height:1px; background:linear-gradient(90deg,#2ece82,#04d9ff,#f4b41a,#2ece82); opacity:.5; }
+    .pf-drift-time { position:relative; z-index:1; padding:.32rem .5rem; border:1px solid rgba(255,255,255,.12); border-radius:99px; background:#0b1b17; color:rgba(255,255,255,.55); font:600 .58rem/1 'Aeonik Mono',monospace; }
+    .pf-drift-rail > i { position:relative; z-index:2; width:.8rem; height:.8rem; justify-self:center; border:2px solid #071510; border-radius:50%; background:var(--dot,#2ece82); box-shadow:0 0 0 5px color-mix(in srgb,var(--dot,#2ece82) 14%,transparent),0 0 18px var(--dot,#2ece82); animation:pfDriftPulse 2s ease-in-out infinite; }
+    .pf-drift-rail > i.change { --dot:#04d9ff; animation-delay:-.5s; }.pf-drift-rail > i.risk { --dot:#f4b41a; animation-delay:-1s; }.pf-drift-rail > i.validated { --dot:#2ece82; animation-delay:-1.5s; }
+    .pf-drift-event { position:absolute; display:grid; grid-template-columns:2.4rem minmax(0,1fr) auto; gap:.8rem; align-items:start; width:min(22rem,42%); padding:1rem; border:1px solid rgba(255,255,255,.12); border-radius:12px; background:rgba(10,29,24,.9); box-shadow:0 16px 45px rgba(0,0,0,.28); backdrop-filter:blur(14px); animation:pfDriftFloat 6s ease-in-out infinite; }
+    .pf-drift-event::after { content:""; position:absolute; width:1px; height:3rem; background:linear-gradient(var(--accent,#2ece82),transparent); }
+    .pf-drift-event--baseline { top:6%; left:4%; --accent:#2ece82; }.pf-drift-event--baseline::after { left:22%; top:100%; }
+    .pf-drift-event--change { top:5%; right:5%; --accent:#04d9ff; animation-delay:-2s; }.pf-drift-event--change::after { right:28%; top:100%; }
+    .pf-drift-event--risk { left:8%; bottom:6%; --accent:#f4b41a; animation-delay:-4s; }.pf-drift-event--risk::after { left:28%; bottom:100%; transform:rotate(180deg); }
+    .pf-drift-event--validated { right:4%; bottom:5%; --accent:#2ece82; animation-delay:-1s; }.pf-drift-event--validated::after { right:24%; bottom:100%; transform:rotate(180deg); }
+    .pf-drift-event-icon { display:grid; width:2.4rem; height:2.4rem; place-items:center; border:1px solid color-mix(in srgb,var(--accent) 40%,transparent); border-radius:9px; color:var(--accent); background:color-mix(in srgb,var(--accent) 8%,transparent); font:700 .65rem/1 'Aeonik Mono',monospace; }
+    .pf-drift-event small { color:var(--accent); font:700 .56rem/1 'Aeonik Mono',monospace; }.pf-drift-event strong { display:block; margin-top:.4rem; color:#fff; font-size:.88rem; }.pf-drift-event p { margin:.35rem 0 0; color:rgba(237,246,241,.48); font-size:.68rem; line-height:1.45; }
+    .pf-drift-event > b { padding:.3rem .48rem; border-radius:99px; color:var(--accent); background:color-mix(in srgb,var(--accent) 9%,transparent); font-size:.58rem; white-space:nowrap; }
+    .pf-drift-progress { position:absolute; left:4.2rem; right:1rem; bottom:.65rem; height:.22rem; overflow:hidden; border-radius:99px; background:rgba(255,255,255,.08); }.pf-drift-progress i { display:block; width:72%; height:100%; background:#2ece82; animation:pfDriftProgress 3s ease-in-out infinite alternate; }
+    .pf-drift-summary { position:absolute; top:50%; left:50%; z-index:3; display:grid; width:min(22rem,38%); gap:.65rem; padding:1.15rem; transform:translate(-50%,-50%); border:1px solid rgba(46,206,130,.28); border-radius:12px; background:#071510; box-shadow:0 0 0 .65rem rgba(46,206,130,.025),0 24px 60px rgba(0,0,0,.42); text-align:center; }
+    .pf-drift-summary span { color:#2ece82; font:700 .62rem/1 'Aeonik Mono',monospace; }.pf-drift-summary span i { display:inline-block; width:.45rem; height:.45rem; margin-right:.4rem; border-radius:50%; background:#2ece82; box-shadow:0 0 10px #2ece82; }.pf-drift-summary strong { color:#fff; font:600 1.05rem/1.25 'Roobert',sans-serif; }.pf-drift-summary a { color:#bfffe1; font-size:.7rem; font-weight:700; text-decoration:none; }
+    @keyframes pfDriftPulse { 50% { transform:scale(1.25); opacity:.7; } } @keyframes pfDriftFloat { 50% { transform:translateY(-7px); } } @keyframes pfDriftProgress { from { width:45%; } to { width:78%; } }
 
     /* =========================================================
        FULL-WIDTH STICKY STACKING SECTIONS: HOW THE PLATFORM THINKS
@@ -1822,9 +1972,15 @@ export async function GET() {
     }
 
     @media screen and (max-width: 992px) {
+      .pf-drift-head { grid-template-columns:1fr; align-items:start; }.pf-drift-head p { max-width:42rem; }
+      .pf-lifecycle-track { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .pf-lifecycle-card:nth-child(2) { border-right: 0; }
+      .pf-lifecycle-card:nth-child(-n+2) { border-bottom: 1px solid rgba(7,16,24,.12); }
+      .pf-command-inner { grid-template-columns: 1fr; }
+      .pf-command-visual { transform: none; }
       .pf-guardrails-grid { grid-template-columns: 1fr; }
       .pf-orbit-stage { height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
-      .pf-orbit-center-wrapper { grid-column: 1 / -1; margin: 0 auto; }
+      .pf-orbit-center-wrapper { position:relative; inset:auto; grid-column:1 / -1; margin:0 auto; transform:none; }
       .pf-orbit-nodes-layer { position: static; display: contents; }
       .pf-orbit-node { position: static !important; transform: none !important; justify-content: flex-start; }
       .pf-node--top-left, .pf-node--mid-left, .pf-node--bottom-left { flex-direction: row-reverse; }
@@ -1834,9 +1990,35 @@ export async function GET() {
     }
 
     @media screen and (max-width: 640px) {
+      .pf-drift-canvas { display:grid; min-height:0; gap:.7rem; padding:1rem; }.pf-drift-grid,.pf-drift-rail { display:none; }.pf-drift-event,.pf-drift-summary { position:relative; inset:auto; width:100%; transform:none; animation:none; }.pf-drift-event::after { display:none; }.pf-drift-summary { order:-1; }.pf-drift-progress { position:relative; left:auto; right:auto; bottom:auto; grid-column:2 / -1; width:100%; margin-top:.2rem; }
+      .pf-lifecycle-track { grid-template-columns: 1fr; }
+      .pf-lifecycle-card, .pf-lifecycle-card:nth-child(2) { border-right: 0; border-bottom: 1px solid rgba(7,16,24,.12); }
+      .pf-lifecycle-card:last-child { border-bottom: 0; }
+      .pf-lifecycle-card p { min-height: 0; }
+      .pf-command-body { grid-template-columns: 1fr; }
+      .pf-command-sidebar { grid-template-columns: repeat(5,max-content); overflow-x: auto; }
+      .pf-command-metrics { grid-template-columns: 1fr; }
       .pf-int-grid { grid-template-columns: 1fr; }
       .pf-int-tabs { justify-content: flex-start; }
       .pf-orbit-stage { grid-template-columns: 1fr; }
+      .pf-orbital-section { padding-inline:1rem; }
+      .pf-orbital-heading { margin-bottom:1.25rem; text-align:left; }
+      .pf-orbit-center-wrapper { display:none; }
+      .pf-orbit-stage { display:grid; gap:0; width:100%; margin:0; }
+      .pf-orbit-node,
+      .pf-node--bottom-center { display:grid; grid-template-columns:2.75rem minmax(0,1fr); gap:.85rem; align-items:start; justify-content:stretch; width:100%; padding:1rem 0; border-top:1px solid rgba(20,16,10,.12); text-align:left; }
+      .pf-orbit-node:last-child { border-bottom:1px solid rgba(20,16,10,.12); }
+      .pf-node-badge { grid-column:1; grid-row:1; width:2.75rem; height:2.75rem; }
+      .pf-node-ring-outer { padding:3px; }
+      .pf-node-ring-inner { padding:2px; }
+      .pf-node-circle { width:2.25rem; height:2.25rem; box-shadow:none; }
+      .pf-node-circle svg { width:1rem; height:1rem; }
+      .pf-node-label,
+      .pf-node-label--left,
+      .pf-node-label--right,
+      .pf-node-label--bottom { grid-column:2; grid-row:1; width:auto; max-width:none; text-align:left; }
+      .pf-node-label strong { font-size:.9rem; }
+      .pf-node-desc { margin-top:.3rem !important; font-size:.75rem; line-height:1.45; }
       .pf-node--top-left, .pf-node--mid-left, .pf-node--bottom-left { flex-direction: row; }
       .pf-node-label--left { text-align: left; }
       .pf-node--bottom-center { justify-content: flex-start; }
@@ -1895,6 +2077,7 @@ export async function GET() {
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .pf-drift-event,.pf-drift-rail > i,.pf-drift-progress i { animation:none !important; }
       .pf *,
       .pf *::before,
       .pf *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }

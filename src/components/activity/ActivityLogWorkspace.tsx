@@ -156,7 +156,7 @@ export default function ActivityLogWorkspace() {
       {!controlPlaneAvailable ? <div className="rounded-[8px] border border-amber-200 bg-amber-50 px-4 py-3 text-[11px] font-bold text-amber-800">Tenant events are current. Team events are temporarily unavailable from the control plane.</div> : null}
       {error ? <div className="rounded-[8px] border border-rose-100 bg-rose-50 px-4 py-3 text-[12px] font-bold text-rose-700">{error}</div> : null}
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-5">
         {metrics.map(({ label, value, helper, Icon, tone }) => <article key={label} className="rounded-[8px] border border-slate-200 bg-white p-3 shadow-[0_8px_22px_rgba(15,23,42,0.035)]"><div className="flex items-center gap-3"><span className={`grid h-10 w-10 place-items-center rounded-[8px] ring-1 ${tone}`}><Icon className="h-4 w-4" /></span><div><p className="text-[9px] font-black uppercase text-slate-500">{label}</p><p className="mt-1 text-[22px] font-black leading-none text-slate-950">{value}</p><p className="mt-1 text-[9px] font-bold text-slate-400">{helper}</p></div></div></article>)}
       </section>
 
